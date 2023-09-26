@@ -19,10 +19,9 @@ public class LngLatHandler implements LngLatHandling {
     public boolean isInRegion(LngLat position, NamedRegion region) {
         LngLat[] vertices = region.vertices();
         Path2D path = new Path2D.Double();
-        path.moveTo(0, 0);
-        for (int i = 0; i < vertices.length; i++) {
-            path.lineTo(vertices[i].lat(), vertices[i].lng());
-        }
+        path.moveTo(vertices[0].lng(), vertices[0].lat());
+        for (int i = 1; i < vertices.length; i++)
+            path.lineTo(vertices[i].lng(), vertices[i].lat());
         path.closePath();
         return path.contains(position.lng(), position.lat());
     }

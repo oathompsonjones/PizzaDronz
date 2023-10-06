@@ -20,22 +20,6 @@ public class OrderValidator implements OrderValidation {
      * @return the validated order
      */
     public Order validateOrder(Order orderToValidate, Restaurant[] definedRestaurants) {
-        // Check that the credit card number is valid
-        if (!creditCardNumberIsValid(orderToValidate.getCreditCardInformation().getCreditCardNumber()))
-            return setValidationCodeAndStatus(orderToValidate, OrderValidationCode.CARD_NUMBER_INVALID);
-
-        // Check that the expiry date is valid
-        if (!creditCardExpiryIsValid(orderToValidate.getCreditCardInformation().getCreditCardExpiry()))
-            return setValidationCodeAndStatus(orderToValidate, OrderValidationCode.EXPIRY_DATE_INVALID);
-
-        // Check that the CVV is valid
-        if (!creditCardCVVIsValid(orderToValidate.getCreditCardInformation().getCvv()))
-            return setValidationCodeAndStatus(orderToValidate, OrderValidationCode.CVV_INVALID);
-
-        // Check that the total price is correct
-        if (!totalIsCorrect(orderToValidate.getPriceTotalInPence(), orderToValidate.getPizzasInOrder()))
-            return setValidationCodeAndStatus(orderToValidate, OrderValidationCode.TOTAL_INCORRECT);
-
         // Check that the number of pizzas is valid
         if (!pizzaCountIsValid(orderToValidate.getPizzasInOrder()))
             return setValidationCodeAndStatus(orderToValidate, OrderValidationCode.MAX_PIZZA_COUNT_EXCEEDED);
@@ -51,8 +35,24 @@ public class OrderValidator implements OrderValidation {
             return setValidationCodeAndStatus(orderToValidate, OrderValidationCode.PIZZA_FROM_MULTIPLE_RESTAURANTS);
 
         // Check that the restaurant is open
-        if (!restaurantIsOpen(restaurant))
+        if (!restaurantIsOpen(restaurant, orderToValidate.getOrderDate()))
             return setValidationCodeAndStatus(orderToValidate, OrderValidationCode.RESTAURANT_CLOSED);
+
+        // Check that the total price is correct
+        if (!totalIsCorrect(orderToValidate.getPriceTotalInPence(), orderToValidate.getPizzasInOrder()))
+            return setValidationCodeAndStatus(orderToValidate, OrderValidationCode.TOTAL_INCORRECT);
+
+        // Check that the credit card number is valid
+        if (!creditCardNumberIsValid(orderToValidate.getCreditCardInformation().getCreditCardNumber()))
+            return setValidationCodeAndStatus(orderToValidate, OrderValidationCode.CARD_NUMBER_INVALID);
+
+        // Check that the expiry date is valid
+        if (!creditCardExpiryIsValid(orderToValidate.getCreditCardInformation().getCreditCardExpiry(), orderToValidate.getOrderDate()))
+            return setValidationCodeAndStatus(orderToValidate, OrderValidationCode.EXPIRY_DATE_INVALID);
+
+        // Check that the CVV is valid
+        if (!creditCardCVVIsValid(orderToValidate.getCreditCardInformation().getCvv()))
+            return setValidationCodeAndStatus(orderToValidate, OrderValidationCode.CVV_INVALID);
 
         // If all the checks pass, the order is valid
         return setValidationCodeAndStatus(orderToValidate, OrderValidationCode.NO_ERROR, OrderStatus.VALID_BUT_NOT_DELIVERED);
@@ -112,7 +112,7 @@ public class OrderValidator implements OrderValidation {
      * @param creditCardExpiry the credit card expiry date to check
      * @return whether the credit card expiry date is valid
      */
-    private boolean creditCardExpiryIsValid(String creditCardExpiry) {
+    private boolean creditCardExpiryIsValid(String creditCardExpiry, LocalDate orderDate) {
         // Check that both the month and year are numbers
         int expiryMonth;
         int expiryYear;
@@ -129,9 +129,8 @@ public class OrderValidator implements OrderValidation {
             return false;
 
         // Check that the expiry date has not passed
-        LocalDate currentDate = LocalDate.now();
-        int currentMonth = currentDate.getMonthValue();
-        int currentYear = currentDate.getYear();
+        int currentMonth = orderDate.getMonthValue();
+        int currentYear = orderDate.getYear();
         return expiryYear > currentYear % 100 || expiryYear == currentYear % 100 && expiryMonth > currentMonth;
     }
 
@@ -188,6 +187,9 @@ public class OrderValidator implements OrderValidation {
      * @return whether all the pizzas on the order exist
      */
     private Restaurant[] pizzasAllExist(Pizza[] pizzas, Restaurant[] restaurants) {
+        // Check that there is at least one pizza in the order
+        if (pizzas.length == 0)
+            return new Restaurant[] { null };
         Restaurant[] pizzaRestaurants = new Restaurant[pizzas.length];
         // For each pizza...
         for (int i = 0; i < pizzas.length; i++) {
@@ -222,8 +224,8 @@ public class OrderValidator implements OrderValidation {
      * @param restaurant the restaurant to check
      * @return whether the restaurant is open
      */
-    private boolean restaurantIsOpen(Restaurant restaurant) {
+    private boolean restaurantIsOpen(Restaurant restaurant, LocalDate orderDate) {
         // Check that the restaurant is open today
-        return Arrays.stream(restaurant.openingDays()).anyMatch(d -> d == LocalDate.now().getDayOfWeek());
+        return Arrays.stream(restaurant.openingDays()).anyMatch(d -> d == orderDate.getDayOfWeek());
     }
 }

@@ -39,7 +39,7 @@ public class OrderValidator implements OrderValidation {
             return setValidationCodeAndStatus(orderToValidate, OrderValidationCode.RESTAURANT_CLOSED);
 
         // Check that the total price is correct
-        if (!totalIsCorrect(orderToValidate.getPriceTotalInPence(), orderToValidate.getPizzasInOrder()))
+        if (!totalIsCorrect(orderToValidate.getPriceTotalInPence(), orderToValidate.getPizzasInOrder(), restaurant.menu()))
             return setValidationCodeAndStatus(orderToValidate, OrderValidationCode.TOTAL_INCORRECT);
 
         // Check that the credit card number is valid
@@ -162,11 +162,16 @@ public class OrderValidator implements OrderValidation {
      * @param pizzas the pizzas on the order
      * @return whether the total price of the order is correct
      */
-    private boolean totalIsCorrect(int totalOnOrder, Pizza[] pizzas) {
+    private boolean totalIsCorrect(int totalOnOrder, Pizza[] pizzasInOrder, Pizza[] pizzasOnMenu) {
         // Check that the price of each pizza sums to the total price of the order.
         int total = SystemConstants.ORDER_CHARGE_IN_PENCE;
-        for (Pizza pizza : pizzas)
-            total += pizza.priceInPence();
+        for (Pizza pizza : pizzasInOrder) {
+            // Find the pizza on the menu
+            Pizza menuPizza = Arrays.stream(pizzasOnMenu).filter(p -> Objects.equals(p.name(), pizza.name())).findFirst().orElse(null);
+            assert menuPizza != null;
+            // Add the price of the pizza to the total
+            total += menuPizza.priceInPence();
+        }
         return total == totalOnOrder;
     }
 

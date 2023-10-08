@@ -279,6 +279,16 @@ public class OrderValidatorTest extends TestCase {
 
         order = generateBasicOrder();
         order.setPizzasInOrder(new Pizza[] {
+                new Pizza("Margarita", 500), // Correct name, but incorrect price
+                new Pizza("Calzone", 1400)
+        });
+        order.setPriceTotalInPence(SystemConstants.ORDER_CHARGE_IN_PENCE + 500 + 1400);
+        order = validator.validateOrder(order, generateRestaurants());
+        assertEquals(OrderStatus.INVALID, order.getOrderStatus());
+        assertEquals(OrderValidationCode.TOTAL_INCORRECT, order.getOrderValidationCode());
+
+        order = generateBasicOrder();
+        order.setPizzasInOrder(new Pizza[] {
                 new Pizza("Margarita", 1000),
                 new Pizza("Calzone", 1400)
         });

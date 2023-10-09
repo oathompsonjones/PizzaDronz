@@ -88,23 +88,8 @@ public class OrderValidator implements OrderValidation {
      * @return whether the credit card number is valid
      */
     private boolean creditCardNumberIsValid(String creditCardNumber) {
-        // Check that there are 16 characters
-        if (creditCardNumber.length() != 16)
-            return false;
-
-        // Check that every character is a number
-        try {
-            String[] chars = creditCardNumber.split("");
-            for (String aChar : chars)
-                Integer.parseInt(aChar);
-        } catch (Exception e) {
-            return false;
-        }
-
-        // Check that the number is valid for either Visa or MasterCard
-        boolean isVisa = creditCardNumber.startsWith("4");
-        boolean isMastercard = creditCardNumber.startsWith("2") || creditCardNumber.startsWith("5");
-        return isVisa || isMastercard;
+        // Check that the number is a valid card number for either Visa or MasterCard
+        return creditCardNumber.matches("^[245]\\d{15}$");
     }
 
     /**
@@ -140,26 +125,15 @@ public class OrderValidator implements OrderValidation {
      * @return whether the credit card CVV is valid
      */
     private boolean creditCardCVVIsValid(String cvv) {
-        // Check that there are 3 characters
-        if (cvv.length() != 3)
-            return false;
-
-        // Check that every character is a number
-        try {
-            String[] chars = cvv.split("");
-            for (String aChar : chars)
-                Integer.parseInt(aChar);
-        } catch (Exception e) {
-            return false;
-        }
-
-        return true;
+        // Check that the CVV is a three-digit number
+        return cvv.matches("^\\d{3}$");
     }
 
     /**
      * Check that the total price of an order is correct.
      * @param totalOnOrder the total price of the order
-     * @param pizzas the pizzas on the order
+     * @param pizzasInOrder the pizzas on the order
+     * @param pizzasOnMenu the pizzas available on the restaurant menu
      * @return whether the total price of the order is correct
      */
     private boolean totalIsCorrect(int totalOnOrder, Pizza[] pizzasInOrder, Pizza[] pizzasOnMenu) {

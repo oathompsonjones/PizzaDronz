@@ -19,7 +19,7 @@ public class OrderValidatorTest extends TestCase {
                 OrderStatus.UNDEFINED,
                 OrderValidationCode.UNDEFINED,
                 SystemConstants.ORDER_CHARGE_IN_PENCE + 1000,
-                new Pizza[]{
+                new Pizza[] {
                         new Pizza("Margarita", 1000)
                 },
                 null

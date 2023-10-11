@@ -13,7 +13,7 @@ public class OrderValidatorTest extends TestCase {
     OrderValidator validator = new OrderValidator();
 
     private Order generateBasicOrder() {
-        Order order = new Order(
+        return new Order(
                 "1",
                 LocalDate.now(),
                 OrderStatus.UNDEFINED,
@@ -22,15 +22,12 @@ public class OrderValidatorTest extends TestCase {
                 new Pizza[] {
                         new Pizza("Margarita", 1000)
                 },
-                null
+                new CreditCardInformation(
+                        "4123456789012345",
+                        "01/30",
+                        "123"
+                )
         );
-        // There is a bug in the source code where the credit card information is not set by the constructor
-        order.setCreditCardInformation(new CreditCardInformation(
-                "4123456789012345",
-                "01/30",
-                "123"
-        ));
-        return order;
     }
 
     @SuppressWarnings("SpellCheckingInspection")

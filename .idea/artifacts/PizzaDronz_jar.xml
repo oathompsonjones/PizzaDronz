@@ -1,0 +1,9 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="PizzaDronz:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/PizzaDronz_jar</output-path>
+    <root id="archive" name="PizzaDronz.jar">
+      <element id="module-output" name="PizzaDronz" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/../IlpDataObjects.jar" path-in-jar="/" />
+    </root>
+  </artifact>
+</component>

@@ -15,7 +15,7 @@ public class OrderValidatorTest extends TestCase {
     private Order generateBasicOrder() {
         return new Order(
                 "1",
-                LocalDate.now(),
+                LocalDate.of(2023, 10, 3),
                 OrderStatus.UNDEFINED,
                 OrderValidationCode.UNDEFINED,
                 SystemConstants.ORDER_CHARGE_IN_PENCE + 1000,

@@ -41,16 +41,15 @@ public class LngLatHandler implements LngLatHandling {
         LngLat[] vertices = region.vertices();
         Path2D path = new Path2D.Double();
         path.moveTo(vertices[0].lng(), vertices[0].lat());
-        for (int i = 1; i < vertices.length; i++)
+        for (int i = 1; i < vertices.length; i++) {
             path.lineTo(vertices[i].lng(), vertices[i].lat());
-        path.closePath();
-        // Determines if the position lies on the edge of the polygon, as the path.contains method does not include all the edges
-        for (int i = 0; i < vertices.length; i++) {
+            // Determines if the position lies on the edge of the polygon, as the path.contains method does not include all the edges
             LngLat vertex1 = vertices[i];
             LngLat vertex2 = vertices[(i + 1) % vertices.length];
             if (distanceTo(position, vertex1) + distanceTo(position, vertex2) == distanceTo(vertex1, vertex2))
                 return true;
         }
+        path.closePath();
         // Determines if the position lies within the polygon
         return path.contains(position.lng(), position.lat());
     }

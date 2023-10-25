@@ -13,5 +13,6 @@ public class PizzaDronz {
     private final LngLatHandler  lngLatHandler  = new LngLatHandler();
 
     public PizzaDronz(String apiUrl, LocalDate date) {
+        restManager = new RESTManager(apiUrl);
     }
 }

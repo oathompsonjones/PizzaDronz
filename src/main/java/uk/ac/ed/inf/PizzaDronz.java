@@ -22,8 +22,8 @@ public class PizzaDronz {
     public PizzaDronz(String apiUrl, LocalDate date) {
         restManager = new RESTManager(apiUrl);
         flightPathGenerator = new FlightPathGenerator(restManager.getCentralArea(), restManager.getNoFlyZones(), restManager.getRestaurants());
-        Order[] validOrders = getValidOrders(date);
-        generateFlightPaths(validOrders);
+        Order[]            validOrders = getValidOrders(date);
+        List<List<LngLat>> flightPaths = flightPathGenerator.generate(validOrders);
     }
 
     public static Restaurant getOrderRestaurant(Order order, Restaurant[] restaurants) {
@@ -37,10 +37,6 @@ public class PizzaDronz {
         Order[]      validOrders     = Arrays.stream(validatedOrders).filter(order -> order.getOrderStatus() == OrderStatus.VALID_BUT_NOT_DELIVERED).toArray(Order[]::new);
         Order[]      invalidOrders   = Arrays.stream(validatedOrders).filter(order -> order.getOrderStatus() == OrderStatus.INVALID).toArray(Order[]::new);
         return validOrders;
-    }
-
-    private List<List<LngLat>> generateFlightPaths(Order[] orders) {
-        return Arrays.stream(orders).map(flightPathGenerator::generate).toList();
     }
 
     private void generateDeliveryJSON(LocalDate date) {

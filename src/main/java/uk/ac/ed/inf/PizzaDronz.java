@@ -41,14 +41,17 @@ public class PizzaDronz {
 
     private void generateDeliveryJSON(LocalDate date) {
         String fileName = "deliveries-" + date.toString() + ".json";
+        writeFile(fileName, "");
     }
 
     private void generateFlightPathJSON(LocalDate date) {
         String fileName = "flightpath-" + date.toString() + ".json";
+        writeFile(fileName, "");
     }
 
     private void generateFlightPathGeoJSON(LocalDate date) {
         String fileName = "drone-" + date.toString() + ".geojson";
+        writeFile(fileName, "");
     }
 
     private void writeFile(String name, String data) {
@@ -57,7 +60,7 @@ public class PizzaDronz {
             fileWriter.write(data);
             fileWriter.close();
         } catch (IOException e) {
-            e.printStackTrace();
+            System.err.println("Error writing to file " + name);
         }
     }
 }

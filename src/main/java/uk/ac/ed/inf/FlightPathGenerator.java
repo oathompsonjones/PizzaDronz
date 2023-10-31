@@ -23,11 +23,12 @@ public class FlightPathGenerator {
         return Arrays.stream(orders).map(this::generate).toList();
     }
 
-    public List<LngLat> generate(Order order) {
-        LngLat start    = PizzaDronz.getOrderRestaurant(order, restaurants).location();
-        LngLat goal     = PizzaDronz.appletonTower;
-        String cacheKey = start + "," + goal;
-        return cache.computeIfAbsent(cacheKey, k -> aStar(start, goal));
+    private List<LngLat> generate(Order order) {
+        System.out.println(PizzaDronz.getOrderRestaurant(order, restaurants).name());
+        Restaurant restaurant = PizzaDronz.getOrderRestaurant(order, restaurants);
+        LngLat     start      = restaurant.location();
+        LngLat     goal       = PizzaDronz.appletonTower;
+        return cache.computeIfAbsent(restaurant.name(), k -> aStar(start, goal, 16));
     }
 
     private List<LngLat> aStar(LngLat start, LngLat goal) {

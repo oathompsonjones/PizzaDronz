@@ -11,12 +11,14 @@ public class FlightPathGenerator {
     private final NamedRegion               centralArea;
     private final NamedRegion[]             noFlyZones;
     private final Restaurant[]              restaurants;
+    private final int                       timeLimit;
     private final Map<String, List<LngLat>> cache = new HashMap<>();
 
     public FlightPathGenerator(NamedRegion centralArea, NamedRegion[] noFlyZones, Restaurant[] restaurants) {
         this.centralArea = centralArea;
         this.noFlyZones = noFlyZones;
         this.restaurants = restaurants;
+        this.timeLimit = 20_000 / restaurants.length;
     }
 
     public List<List<LngLat>> generate(Order[] orders) {
@@ -31,7 +33,10 @@ public class FlightPathGenerator {
         return cache.computeIfAbsent(restaurant.name(), k -> aStar(start, goal, 16));
     }
 
-    private List<LngLat> aStar(LngLat start, LngLat goal) {
+    private List<LngLat> aStar(LngLat start, LngLat goal, int maxNeighbours) {
+        System.out.println("A* with " + maxNeighbours + " neighbours");
+        long startTime = System.currentTimeMillis();
+
         Map<LngLat, LngLat> cameFrom = new HashMap<>();
 
         Map<LngLat, Double> gScore = new HashMap<>();
@@ -44,12 +49,15 @@ public class FlightPathGenerator {
         openSet.add(start);
 
         while (!openSet.isEmpty()) {
+            if (System.currentTimeMillis() - startTime > timeLimit)
+                return maxNeighbours > 4 ? aStar(start, goal, maxNeighbours / 2) : new LinkedList<>();
+
             LngLat current = openSet.remove();
             if (PizzaDronz.lngLatHandler.isCloseTo(current, goal))
                 return reconstructPath(cameFrom, current);
 
             boolean currentInCentralArea = PizzaDronz.lngLatHandler.isInCentralArea(current, centralArea);
-            for (LngLat neighbour : PizzaDronz.lngLatHandler.getNeighbours(current)) {
+            for (LngLat neighbour : PizzaDronz.lngLatHandler.getNeighbours(current, maxNeighbours)) {
                 boolean neighbourInNoFlyZoneOrLineCrossesNoFlyZone = Arrays.stream(noFlyZones).anyMatch(noFlyZone -> PizzaDronz.lngLatHandler.isInRegion(neighbour, noFlyZone) || PizzaDronz.lngLatHandler.lineCrossesRegion(current, neighbour, noFlyZone));
                 boolean leavesCentralAreaAfterEntering             = currentInCentralArea && !PizzaDronz.lngLatHandler.isInCentralArea(neighbour, centralArea);
                 if (neighbourInNoFlyZoneOrLineCrossesNoFlyZone || leavesCentralAreaAfterEntering)
@@ -65,7 +73,7 @@ public class FlightPathGenerator {
             }
         }
 
-        return null;
+        return new LinkedList<>();
     }
 
     private double heuristic(LngLat node, LngLat goal) {

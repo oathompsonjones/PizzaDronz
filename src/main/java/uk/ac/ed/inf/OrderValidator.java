@@ -15,7 +15,8 @@ import java.util.Objects;
 public class OrderValidator implements OrderValidation {
     /**
      * Validate an order and deliver a validated version where the OrderStatus and OrderValidationCode are set accordingly.
-     * @param orderToValidate the order which needs validation
+     *
+     * @param orderToValidate    the order which needs validation
      * @param definedRestaurants the array of defined restaurants
      * @return the validated order
      */
@@ -60,8 +61,9 @@ public class OrderValidator implements OrderValidation {
 
     /**
      * Set the validation code of an order and set the status to Invalid.
+     *
      * @param order the order to set the validation code and status of
-     * @param code the validation code to set
+     * @param code  the validation code to set
      * @return the order with the validation code and status set
      */
     private Order setValidationCodeAndStatus(Order order, OrderValidationCode code) {
@@ -70,8 +72,9 @@ public class OrderValidator implements OrderValidation {
 
     /**
      * Set the validation code and status of an order.
-     * @param order the order to set the validation code and status of
-     * @param code the validation code to set
+     *
+     * @param order  the order to set the validation code and status of
+     * @param code   the validation code to set
      * @param status the status to set
      * @return the order with the validation code and status set
      */
@@ -84,6 +87,7 @@ public class OrderValidator implements OrderValidation {
 
     /**
      * Check that a credit card number is valid.
+     *
      * @param creditCardNumber the credit card number to check
      * @return whether the credit card number is valid
      */
@@ -94,6 +98,7 @@ public class OrderValidator implements OrderValidation {
 
     /**
      * Check that a credit card expiry date is valid.
+     *
      * @param creditCardExpiry the credit card expiry date to check
      * @return whether the credit card expiry date is valid
      */
@@ -115,12 +120,13 @@ public class OrderValidator implements OrderValidation {
 
         // Check that the expiry date has not passed
         int currentMonth = orderDate.getMonthValue();
-        int currentYear = orderDate.getYear();
+        int currentYear  = orderDate.getYear();
         return expiryYear > currentYear % 100 || expiryYear == currentYear % 100 && expiryMonth > currentMonth;
     }
 
     /**
      * Check that a credit card CVV is valid.
+     *
      * @param cvv the credit card CVV to check
      * @return whether the credit card CVV is valid
      */
@@ -131,9 +137,10 @@ public class OrderValidator implements OrderValidation {
 
     /**
      * Check that the total price of an order is correct.
-     * @param totalOnOrder the total price of the order
+     *
+     * @param totalOnOrder  the total price of the order
      * @param pizzasInOrder the pizzas on the order
-     * @param pizzasOnMenu the pizzas available on the restaurant menu
+     * @param pizzasOnMenu  the pizzas available on the restaurant menu
      * @return whether the total price of the order is correct
      */
     private boolean totalIsCorrect(int totalOnOrder, Pizza[] pizzasInOrder, Pizza[] pizzasOnMenu) {
@@ -151,6 +158,7 @@ public class OrderValidator implements OrderValidation {
 
     /**
      * Check that the number of pizzas on an order is valid.
+     *
      * @param pizzas the pizzas on the order
      * @return whether the number of pizzas on the order is valid
      */
@@ -161,7 +169,8 @@ public class OrderValidator implements OrderValidation {
 
     /**
      * Check that all the pizzas on an order exist.
-     * @param pizzas the pizzas on the order
+     *
+     * @param pizzas      the pizzas on the order
      * @param restaurants the restaurants that the pizzas could be from
      * @return whether all the pizzas on the order exist
      */
@@ -190,6 +199,7 @@ public class OrderValidator implements OrderValidation {
 
     /**
      * Check that all the pizzas on an order are from the same restaurant.
+     *
      * @param restaurants the restaurants that the pizzas are be from
      * @return the restaurant that all the pizzas are from, or null if they are not all from the same restaurant
      */
@@ -200,6 +210,7 @@ public class OrderValidator implements OrderValidation {
 
     /**
      * Check that a restaurant is open.
+     *
      * @param restaurant the restaurant to check
      * @return whether the restaurant is open
      */

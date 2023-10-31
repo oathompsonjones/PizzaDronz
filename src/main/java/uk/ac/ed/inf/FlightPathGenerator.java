@@ -19,6 +19,10 @@ public class FlightPathGenerator {
         this.restaurants = restaurants;
     }
 
+    public List<List<LngLat>> generate(Order[] orders) {
+        return Arrays.stream(orders).map(this::generate).toList();
+    }
+
     public List<LngLat> generate(Order order) {
         LngLat start    = PizzaDronz.getOrderRestaurant(order, restaurants).location();
         LngLat goal     = PizzaDronz.appletonTower;

@@ -9,7 +9,6 @@ import uk.ac.ed.inf.ilp.data.Restaurant;
 import java.io.IOException;
 import java.net.URL;
 import java.time.LocalDate;
-import java.util.Arrays;
 
 public class RESTManager {
     private final ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
@@ -22,8 +21,12 @@ public class RESTManager {
     }
 
     private Object GET(Endpoints endpoint) {
+        return GET(endpoint, "");
+    }
+
+    private Object GET(Endpoints endpoint, String args) {
         try {
-            return mapper.readValue(new URL(baseUrl + endpoint.getUrl()), endpoint.getReturnType());
+            return mapper.readValue(new URL(baseUrl + endpoint.getUrl() + args), endpoint.getReturnType());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -42,7 +45,7 @@ public class RESTManager {
     }
 
     public Order[] getOrders(LocalDate date) {
-        return Arrays.stream(getOrders()).filter(order -> order.getOrderDate().equals(date)).toArray(Order[]::new);
+        return (Order[]) GET(Endpoints.ORDERS, "/" + date);
     }
 
     public NamedRegion getCentralArea() {

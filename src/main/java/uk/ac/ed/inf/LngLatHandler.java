@@ -5,13 +5,15 @@ import uk.ac.ed.inf.ilp.data.LngLat;
 import uk.ac.ed.inf.ilp.data.NamedRegion;
 import uk.ac.ed.inf.ilp.interfaces.LngLatHandling;
 
+import java.awt.geom.Line2D;
 import java.awt.geom.Path2D;
 
 public class LngLatHandler implements LngLatHandling {
     /**
      * Calculates the distance between two points
+     *
      * @param startPosition the position to calculate the distance from
-     * @param endPosition the position to calculate the distance to
+     * @param endPosition   the position to calculate the distance to
      * @return the distance between the two points
      */
     public double distanceTo(LngLat startPosition, LngLat endPosition) {
@@ -21,6 +23,7 @@ public class LngLatHandler implements LngLatHandling {
 
     /**
      * Checks if two points are close to each other
+     *
      * @param startPosition the position to check the distance from
      * @param otherPosition the position to check the distance to
      * @return true if the distance between the two points is less than the close distance, false otherwise
@@ -32,14 +35,15 @@ public class LngLatHandler implements LngLatHandling {
 
     /**
      * Checks if a position is in a region
+     *
      * @param position the position to check
-     * @param region the region to check
+     * @param region   the region to check
      * @return true if the position is in the region, false otherwise
      */
     public boolean isInRegion(LngLat position, NamedRegion region) {
         // Creates a polygon from the region's vertices
         LngLat[] vertices = region.vertices();
-        Path2D path = new Path2D.Double();
+        Path2D   path     = new Path2D.Double();
         path.moveTo(vertices[0].lng(), vertices[0].lat());
         for (int i = 1; i < vertices.length; i++) {
             path.lineTo(vertices[i].lng(), vertices[i].lat());
@@ -54,10 +58,28 @@ public class LngLatHandler implements LngLatHandling {
         return path.contains(position.lng(), position.lat());
     }
 
+    public boolean linesIntersect(LngLat pos1, LngLat pos2, LngLat pos3, LngLat pos4) {
+        Line2D line1 = new Line2D.Double(pos1.lng(), pos1.lat(), pos2.lng(), pos2.lat());
+        Line2D line2 = new Line2D.Double(pos3.lng(), pos3.lat(), pos4.lng(), pos4.lat());
+        return line1.intersectsLine(line2);
+    }
+
+    public boolean lineCrossesRegion(LngLat pos1, LngLat pos2, NamedRegion region) {
+        LngLat[] vertices = region.vertices();
+        for (int i = 0; i < vertices.length; i++) {
+            LngLat vertex1 = vertices[i];
+            LngLat vertex2 = vertices[(i + 1) % vertices.length];
+            if (linesIntersect(pos1, pos2, vertex1, vertex2))
+                return true;
+        }
+        return false;
+    }
+
     /**
      * Calculates the next position of the drone
+     *
      * @param startPosition the position to calculate the next position from
-     * @param angle the angle to calculate the next position at
+     * @param angle         the angle to calculate the next position at
      * @return the next position of the drone
      */
     public LngLat nextPosition(LngLat startPosition, double angle) {
@@ -66,9 +88,22 @@ public class LngLatHandler implements LngLatHandling {
             return startPosition;
         // Uses trigonometry to calculate the new position
         double lngMultiplier = Math.cos(Math.toRadians(angle));
-        double newLng = startPosition.lng() + lngMultiplier * SystemConstants.DRONE_MOVE_DISTANCE;
+        double newLng        = startPosition.lng() + lngMultiplier * SystemConstants.DRONE_MOVE_DISTANCE;
         double latMultiplier = Math.sin(Math.toRadians(angle));
-        double newLat = startPosition.lat() + latMultiplier * SystemConstants.DRONE_MOVE_DISTANCE;
+        double newLat        = startPosition.lat() + latMultiplier * SystemConstants.DRONE_MOVE_DISTANCE;
         return new LngLat(newLng, newLat);
+    }
+
+    /**
+     * Calculates the next position of the drone in each of the 16 cardinal directions
+     *
+     * @param position the position to calculate the neighbours of
+     * @return an array of the next positions of the drone in each of the 16 cardinal directions
+     */
+    public LngLat[] getNeighbours(LngLat position) {
+        LngLat[] neighbours = new LngLat[16];
+        for (int i = 0; i < 16; i++)
+            neighbours[i] = nextPosition(position, i * 22.5);
+        return neighbours;
     }
 }

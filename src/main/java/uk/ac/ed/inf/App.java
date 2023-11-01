@@ -3,7 +3,8 @@ package uk.ac.ed.inf;
 import java.time.LocalDate;
 
 /**
- * Hello world!
+ * Main class of the program. It takes two arguments from the command line:
+ * the date and the path to the file containing the orders.
  */
 public class App {
     public static void main(String[] args) {

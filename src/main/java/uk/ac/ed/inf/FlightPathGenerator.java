@@ -7,6 +7,9 @@ import uk.ac.ed.inf.ilp.data.Restaurant;
 
 import java.util.*;
 
+/**
+ * Generates the flight paths for the given orders.
+ */
 public class FlightPathGenerator {
     /**
      * Stores the central area, which the drone cannot leave once it has entered.

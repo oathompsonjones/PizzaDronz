@@ -107,10 +107,8 @@ public class LngLatHandler implements LngLatHandling {
         if (angle == 999)
             return startPosition;
         // Uses trigonometry to calculate the new position
-        double lngMultiplier = Math.cos(Math.toRadians(angle));
-        double newLng        = startPosition.lng() + lngMultiplier * SystemConstants.DRONE_MOVE_DISTANCE;
-        double latMultiplier = Math.sin(Math.toRadians(angle));
-        double newLat        = startPosition.lat() + latMultiplier * SystemConstants.DRONE_MOVE_DISTANCE;
+        double newLng = startPosition.lng() + Math.cos(Math.toRadians(angle)) * SystemConstants.DRONE_MOVE_DISTANCE;
+        double newLat = startPosition.lat() + Math.sin(Math.toRadians(angle)) * SystemConstants.DRONE_MOVE_DISTANCE;
         return new LngLat(newLng, newLat);
     }
 

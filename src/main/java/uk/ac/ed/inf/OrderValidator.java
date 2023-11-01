@@ -12,6 +12,9 @@ import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Objects;
 
+/**
+ * Handles the validation of orders.
+ */
 public class OrderValidator implements OrderValidation {
     /**
      * Validate an order and deliver a validated version where the OrderStatus and OrderValidationCode are set accordingly.

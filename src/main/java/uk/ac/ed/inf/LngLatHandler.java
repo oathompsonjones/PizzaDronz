@@ -8,6 +8,9 @@ import uk.ac.ed.inf.ilp.interfaces.LngLatHandling;
 import java.awt.geom.Line2D;
 import java.awt.geom.Path2D;
 
+/**
+ * Handles longitude and latitude data
+ */
 public class LngLatHandler implements LngLatHandling {
     /**
      * Calculates the distance between two points
@@ -58,12 +61,29 @@ public class LngLatHandler implements LngLatHandling {
         return path.contains(position.lng(), position.lat());
     }
 
+    /**
+     * Checks if two lines intersect
+     *
+     * @param pos1 the first point of the first line
+     * @param pos2 the second point of the first line
+     * @param pos3 the first point of the second line
+     * @param pos4 the second point of the second line
+     * @return true if the lines intersect, false otherwise
+     */
     public boolean linesIntersect(LngLat pos1, LngLat pos2, LngLat pos3, LngLat pos4) {
         Line2D line1 = new Line2D.Double(pos1.lng(), pos1.lat(), pos2.lng(), pos2.lat());
         Line2D line2 = new Line2D.Double(pos3.lng(), pos3.lat(), pos4.lng(), pos4.lat());
         return line1.intersectsLine(line2);
     }
 
+    /**
+     * Checks if a line crosses a region
+     *
+     * @param pos1   the first point of the line
+     * @param pos2   the second point of the line
+     * @param region the region to check
+     * @return true if the line crosses the region, false otherwise
+     */
     public boolean lineCrossesRegion(LngLat pos1, LngLat pos2, NamedRegion region) {
         LngLat[] vertices = region.vertices();
         for (int i = 0; i < vertices.length; i++) {

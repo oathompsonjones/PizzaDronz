@@ -113,7 +113,7 @@ public class FlightPathGenerator {
             // and add it to the open set.
             boolean currentInCentralArea = PizzaDronz.lngLatHandler.isInCentralArea(current, centralArea);
             for (LngLat neighbour : PizzaDronz.lngLatHandler.getNeighbours(current, maxNeighbours)) {
-                boolean neighbourInNoFlyZoneOrLineCrossesNoFlyZone = Arrays.stream(noFlyZones).anyMatch(noFlyZone -> PizzaDronz.lngLatHandler.isInRegion(neighbour, noFlyZone) || PizzaDronz.lngLatHandler.lineCrossesRegion(current, neighbour, noFlyZone));
+                boolean neighbourInNoFlyZoneOrLineCrossesNoFlyZone = Arrays.stream(noFlyZones).anyMatch(noFlyZone -> PizzaDronz.lngLatHandler.lineCrossesRegion(current, neighbour, noFlyZone));
                 boolean leavesCentralAreaAfterEntering             = currentInCentralArea && !PizzaDronz.lngLatHandler.isInCentralArea(neighbour, centralArea);
                 if (neighbourInNoFlyZoneOrLineCrossesNoFlyZone || leavesCentralAreaAfterEntering)
                     continue;

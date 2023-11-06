@@ -29,7 +29,7 @@ public class PizzaDronz {
      */
     public static final LngLat              appletonTower  = new LngLat(-3.186874, 55.944494);
     /**
-     * Store the instance of the {@link FlightPathGenerator} class.
+     * Stores the instance of the {@link FlightPathGenerator} class.
      */
     public final        FlightPathGenerator flightPathGenerator;
     /**

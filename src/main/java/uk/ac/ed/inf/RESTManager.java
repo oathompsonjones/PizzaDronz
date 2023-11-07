@@ -15,13 +15,13 @@ import java.time.LocalDate;
  */
 public class RESTManager {
     /**
-     * The object mapper used to parse JSON responses into Java objects.
+     * The object mapper used to parse between JSON and Java Objects.
      */
-    private final ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
+    public final ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
     /**
      * The base URL of the server.
      */
-    private       String       baseUrl;
+    private      String       baseUrl;
 
     /**
      * Creates a new RESTManager object.
@@ -53,7 +53,7 @@ public class RESTManager {
      */
     private Object GET(Endpoints endpoint, String args) {
         try {
-            return mapper.readValue(new URL(baseUrl + endpoint.getUrl() + args), endpoint.getReturnType());
+            return objectMapper.readValue(new URL(baseUrl + endpoint.getUrl() + args), endpoint.getReturnType());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

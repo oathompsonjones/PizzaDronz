@@ -130,7 +130,7 @@ public class FlightPathGenerator {
         long startTime = System.currentTimeMillis();
 
         // The set of nodes already evaluated.
-        Map<LngLat, LngLatAngle> cameFrom = new HashMap<>();
+        Map<LngLat, Object[]> cameFrom = new HashMap<>();
 
         // The cost of going from the start to each node.
         Map<LngLat, Double> gScore = new HashMap<>();
@@ -160,18 +160,21 @@ public class FlightPathGenerator {
             // after entering it. If so, skip the neighbour. Otherwise, update the neighbour's g-score and f-score,
             // and add it to the open set.
             boolean currentInCentralArea = PizzaDronz.lngLatHandler.isInCentralArea(current, centralArea);
-            for (LngLatAngle neighbour : PizzaDronz.lngLatHandler.getNeighbours(current, maxNeighbours)) {
-                boolean neighbourInNoFlyZoneOrLineCrossesNoFlyZone = Arrays.stream(noFlyZones).anyMatch(noFlyZone -> PizzaDronz.lngLatHandler.lineCrossesRegion(current, neighbour.lngLat(), noFlyZone));
-                boolean leavesCentralAreaAfterEntering             = currentInCentralArea && !PizzaDronz.lngLatHandler.isInCentralArea(neighbour.lngLat(), centralArea);
+            for (int i = 0; i < maxNeighbours; i++) {
+                double angle     = i * 360.0 / maxNeighbours;
+                LngLat neighbour = PizzaDronz.lngLatHandler.nextPosition(current, angle);
+
+                boolean neighbourInNoFlyZoneOrLineCrossesNoFlyZone = Arrays.stream(noFlyZones).anyMatch(noFlyZone -> PizzaDronz.lngLatHandler.lineCrossesRegion(current, neighbour, noFlyZone));
+                boolean leavesCentralAreaAfterEntering             = currentInCentralArea && !PizzaDronz.lngLatHandler.isInCentralArea(neighbour, centralArea);
                 if (neighbourInNoFlyZoneOrLineCrossesNoFlyZone || leavesCentralAreaAfterEntering)
                     continue;
 
-                double tentativeGScore = gScore.getOrDefault(current, Double.MAX_VALUE) + heuristic(current, neighbour.lngLat());
-                if (tentativeGScore < gScore.getOrDefault(neighbour.lngLat(), Double.MAX_VALUE)) {
-                    cameFrom.put(neighbour.lngLat(), new LngLatAngle(current, neighbour.angle(), (int) (System.nanoTime() - PizzaDronz.startTime)));
-                    gScore.put(neighbour.lngLat(), tentativeGScore);
-                    fScore.put(neighbour.lngLat(), tentativeGScore + heuristic(neighbour.lngLat(), goal));
-                    openSet.add(neighbour.lngLat());
+                double tentativeGScore = gScore.getOrDefault(current, Double.MAX_VALUE) + heuristic(current, neighbour);
+                if (tentativeGScore < gScore.getOrDefault(neighbour, Double.MAX_VALUE)) {
+                    cameFrom.put(neighbour, new Object[] { current, angle });
+                    gScore.put(neighbour, tentativeGScore);
+                    fScore.put(neighbour, tentativeGScore + heuristic(neighbour, goal));
+                    openSet.add(neighbour);
                 }
             }
         }
@@ -199,13 +202,15 @@ public class FlightPathGenerator {
      * @param current  the current node
      * @return the path from the start to the given node
      */
-    private FlightPathNode[] reconstructPath(Map<LngLat, LngLatAngle> cameFrom, LngLat current) {
+    private FlightPathNode[] reconstructPath(Map<LngLat, Object[]> cameFrom, LngLat current) {
         List<FlightPathNode> totalPath = new LinkedList<>();
         while (current != null) {
-            LngLatAngle cameFromCurrent = cameFrom.get(current);
+            Object[] cameFromCurrent = cameFrom.get(current);
             if (cameFromCurrent != null) {
-                totalPath.add(0, new FlightPathNode(cameFromCurrent.lngLat(), cameFromCurrent.angle(), current));
-                current = cameFrom.get(current) == null ? null : cameFrom.get(current).lngLat();
+                LngLat node  = (LngLat) cameFromCurrent[0];
+                double angle = (double) cameFromCurrent[1];
+                totalPath.add(0, new FlightPathNode(node, angle, current));
+                current = node;
             } else
                 current = null;
         }

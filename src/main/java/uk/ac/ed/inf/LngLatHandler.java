@@ -98,19 +98,4 @@ public class LngLatHandler implements LngLatHandling {
         double newLat = startPosition.lat() + Math.sin(Math.toRadians(angle)) * SystemConstants.DRONE_MOVE_DISTANCE;
         return new LngLat(newLng, newLat);
     }
-
-    /**
-     * Calculates the neighbours of a position
-     *
-     * @param position the position to calculate the neighbours of
-     * @param count    the number of neighbours to calculate
-     * @return the neighbours of the position
-     */
-    public LngLatAngle[] getNeighbours(LngLat position, int count) {
-        LngLatAngle[] neighbours = new LngLatAngle[count];
-        double        angle      = 360.0 / count;
-        for (int i = 0; i < count; i++)
-            neighbours[i] = new LngLatAngle(nextPosition(position, i * angle), i * angle);
-        return neighbours;
-    }
 }

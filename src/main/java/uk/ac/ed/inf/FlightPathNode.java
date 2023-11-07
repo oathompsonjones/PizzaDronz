@@ -3,7 +3,13 @@ package uk.ac.ed.inf;
 import uk.ac.ed.inf.ilp.data.LngLat;
 
 /**
- * Stores a node in a flight path.
+ * Represents a node in a flight path.
+ *
+ * @param orderNo                      The order number.
+ * @param fromCoordinate               The starting coordinate.
+ * @param angle                        The angle between the two coordinates.
+ * @param toCoordinate                 The ending coordinate.
+ * @param ticksSinceStartOfCalculation The number of ticks since the start of the calculation.
  */
 public record FlightPathNode(
         String orderNo,
@@ -19,11 +25,12 @@ public record FlightPathNode(
      * @param node    The {@link FlightPathNode} to copy.
      */
     public FlightPathNode(String orderNo, FlightPathNode node) {
-        this(orderNo,
-             node.fromCoordinate,
-             node.angle,
-             node.toCoordinate,
-             (int) (System.nanoTime() - PizzaDronz.startTime)
+        this(
+                orderNo,
+                node.fromCoordinate,
+                node.angle,
+                node.toCoordinate,
+                (int) (System.nanoTime() - PizzaDronz.startTime)
             );
     }
 

@@ -37,6 +37,9 @@ public class FlightPathNodeGeoJSONSerializer extends StdSerializer<FlightPathNod
     @Override
     public void serialize(FlightPathNode[] flightPathNodes, JsonGenerator jsonGenerator, SerializerProvider serializer) throws IOException {
         jsonGenerator.writeStartObject();
+        jsonGenerator.writeStringField("type", "FeatureCollection");
+        jsonGenerator.writeArrayFieldStart("features");
+        jsonGenerator.writeStartObject();
         jsonGenerator.writeStringField("type", "Feature");
         jsonGenerator.writeObjectFieldStart("geometry");
         jsonGenerator.writeStringField("type", "LineString");
@@ -49,6 +52,8 @@ public class FlightPathNodeGeoJSONSerializer extends StdSerializer<FlightPathNod
         }
         jsonGenerator.writeEndArray();
         jsonGenerator.writeEndObject();
+        jsonGenerator.writeEndObject();
+        jsonGenerator.writeEndArray();
         jsonGenerator.writeEndObject();
     }
 }

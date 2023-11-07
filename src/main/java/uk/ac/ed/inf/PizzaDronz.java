@@ -1,16 +1,16 @@
 package uk.ac.ed.inf;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 import uk.ac.ed.inf.ilp.constant.OrderStatus;
 import uk.ac.ed.inf.ilp.data.LngLat;
 import uk.ac.ed.inf.ilp.data.Order;
 import uk.ac.ed.inf.ilp.data.Restaurant;
 
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.File;
 import java.time.LocalDate;
 import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
 
 /**
  * Main class for the PizzaDronz application.
@@ -29,6 +29,10 @@ public class PizzaDronz {
      */
     public static final LngLat              appletonTower  = new LngLat(-3.186874, 55.944494);
     /**
+     * Stores the start time of the application.
+     */
+    public static final long                startTime      = System.nanoTime();
+    /**
      * Stores the instance of the {@link FlightPathGenerator} class.
      */
     public final        FlightPathGenerator flightPathGenerator;
@@ -36,6 +40,14 @@ public class PizzaDronz {
      * Stores the instance of the {@link RESTManager} class.
      */
     private final       RESTManager         restManager;
+    /**
+     * Stores the flight paths.
+     */
+    private             FlightPathNode[]    flightPath     = null;
+    /**
+     * Stores the orders.
+     */
+    private             Order[]             orders         = null;
 
     /**
      * Creates an instance of the {@link PizzaDronz} class.
@@ -46,19 +58,26 @@ public class PizzaDronz {
     public PizzaDronz(String apiUrl, LocalDate date) {
         restManager = new RESTManager(apiUrl);
         flightPathGenerator = new FlightPathGenerator(restManager.getCentralArea(), restManager.getNoFlyZones(), restManager.getRestaurants());
-        Order[]            validOrders = getValidOrders(date);
-        List<List<LngLat>> flightPaths = flightPathGenerator.generate(validOrders);
+        System.out.println("Setup after " + ((System.nanoTime() - startTime) / 1_000_000_000.0) + "s");
+        Order[] validOrders = fetchValidOrders(date);
+        System.out.println("Fetched " + validOrders.length + " valid orders after " + ((System.nanoTime() - startTime) / 1_000_000_000.0) + "s");
+        flightPath = flightPathGenerator.generateFullPath(validOrders);
+        System.out.println("Generated flight path after " + ((System.nanoTime() - startTime) / 1_000_000_000.0) + "s");
+        generateFlightPathJSON(date);
+        generateFlightPathGeoJSON(date);
+        generateDeliveryJSON(date);
     }
 
     /**
-     * Gets the restaurant from the given order.
+     * Fetches and validates all orders.
      *
-     * @param order       The order to get the restaurant from.
-     * @param restaurants The list of restaurants to search through.
-     * @return The restaurant from the given order.
+     * @return The valid orders.
      */
-    public static Restaurant getOrderRestaurant(Order order, Restaurant[] restaurants) {
-        return Arrays.stream(restaurants).filter(r -> Arrays.stream(r.menu()).anyMatch(p -> Objects.equals(p.name(), order.getPizzasInOrder()[0].name()))).toArray(Restaurant[]::new)[0];
+    private Order[] fetchValidOrders() {
+        Restaurant[] restaurants = restManager.getRestaurants();
+        orders = restManager.getOrders();
+        Order[] validatedOrders = Arrays.stream(orders).map(order -> orderValidator.validateOrder(order, restaurants)).toArray(Order[]::new);
+        return Arrays.stream(validatedOrders).filter(order -> order.getOrderStatus() == OrderStatus.VALID_BUT_NOT_DELIVERED).toArray(Order[]::new);
     }
 
     /**
@@ -67,13 +86,11 @@ public class PizzaDronz {
      * @param date The date to fetch the orders for.
      * @return The valid orders.
      */
-    private Order[] getValidOrders(LocalDate date) {
-        Restaurant[] restaurants     = restManager.getRestaurants();
-        Order[]      orders          = restManager.getOrders(date);
-        Order[]      validatedOrders = Arrays.stream(orders).map(order -> orderValidator.validateOrder(order, restaurants)).toArray(Order[]::new);
-        Order[]      validOrders     = Arrays.stream(validatedOrders).filter(order -> order.getOrderStatus() == OrderStatus.VALID_BUT_NOT_DELIVERED).toArray(Order[]::new);
-        Order[]      invalidOrders   = Arrays.stream(validatedOrders).filter(order -> order.getOrderStatus() == OrderStatus.INVALID).toArray(Order[]::new);
-        return validOrders;
+    private Order[] fetchValidOrders(LocalDate date) {
+        Restaurant[] restaurants = restManager.getRestaurants();
+        orders = restManager.getOrders(date);
+        Order[] validatedOrders = Arrays.stream(orders).map(order -> orderValidator.validateOrder(order, restaurants)).toArray(Order[]::new);
+        return Arrays.stream(validatedOrders).filter(order -> order.getOrderStatus() == OrderStatus.VALID_BUT_NOT_DELIVERED).toArray(Order[]::new);
     }
 
     /**

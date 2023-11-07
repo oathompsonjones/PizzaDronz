@@ -82,9 +82,14 @@ public class FlightPathGenerator {
     private FlightPathNode[] generate(Order order) {
         Restaurant restaurant = getOrderRestaurant(order, restaurants);
         assert restaurant != null;
-        LngLat           start = restaurant.location();
-        LngLat           goal  = PizzaDronz.appletonTower;
-        FlightPathNode[] path  = Arrays.stream(cache.computeIfAbsent(restaurant.name(), k -> aStar(start, goal, 16))).map(n -> new FlightPathNode(order.getOrderNo(), n)).toArray(FlightPathNode[]::new);
+        LngLat start = restaurant.location();
+        LngLat goal  = PizzaDronz.appletonTower;
+
+        // Fetch the flight from the cache, or compute it if it is not in the cache.
+        FlightPathNode[] path = cache.computeIfAbsent(restaurant.name(), k -> aStar(start, goal, 16));
+        // Build the path out of new FlightPathNodes, and set the order number.
+        path = Arrays.stream(path).map(n -> new FlightPathNode(order.getOrderNo(), n)).toArray(FlightPathNode[]::new);
+
         order.setOrderStatus(path.length == 0 ? OrderStatus.VALID_BUT_NOT_DELIVERED : OrderStatus.DELIVERED);
         return path;
     }
@@ -97,6 +102,8 @@ public class FlightPathGenerator {
      * @return The restaurant from the given order.
      */
     private Restaurant getOrderRestaurant(Order order, Restaurant[] restaurants) {
+        // As this method is only called on valid orders, it is safe to just find the first restaurant that sells the
+        // first pizza in the order.
         for (Restaurant restaurant : restaurants) {
             for (Pizza pizza : restaurant.menu()) {
                 if (Objects.equals(pizza.name(), order.getPizzasInOrder()[0].name()))
@@ -116,6 +123,7 @@ public class FlightPathGenerator {
         FlightPathNode[] reversedPath = new FlightPathNode[path.length];
         for (int i = 0; i < reversedPath.length; i++) {
             FlightPathNode node = path[path.length - i - 1];
+            // Create a new instance of FlightPathNode, but with the angle reversed.
             reversedPath[i] = new FlightPathNode((node.angle() + 180) % 360, node);
         }
         return reversedPath;
@@ -168,11 +176,13 @@ public class FlightPathGenerator {
                 double angle     = i * 360.0 / maxNeighbours;
                 LngLat neighbour = PizzaDronz.lngLatHandler.nextPosition(current, angle);
 
-                boolean neighbourInNoFlyZoneOrLineCrossesNoFlyZone = Arrays.stream(noFlyZones).anyMatch(noFlyZone -> PizzaDronz.lngLatHandler.lineCrossesRegion(current, neighbour, noFlyZone));
-                boolean leavesCentralAreaAfterEntering             = currentInCentralArea && !PizzaDronz.lngLatHandler.isInCentralArea(neighbour, centralArea);
-                if (neighbourInNoFlyZoneOrLineCrossesNoFlyZone || leavesCentralAreaAfterEntering)
+                // If the neighbour is not in a legal position, skip it.
+                boolean neighbourCrossesNoFlyZone      = Arrays.stream(noFlyZones).anyMatch(noFlyZone -> PizzaDronz.lngLatHandler.lineCrossesRegion(current, neighbour, noFlyZone));
+                boolean leavesCentralAreaAfterEntering = currentInCentralArea && !PizzaDronz.lngLatHandler.isInCentralArea(neighbour, centralArea);
+                if (neighbourCrossesNoFlyZone || leavesCentralAreaAfterEntering)
                     continue;
 
+                // Update the neighbour's g-score and f-score, and add it to the open set.
                 double tentativeGScore = gScore.getOrDefault(current, Double.MAX_VALUE) + heuristic(current, neighbour);
                 if (tentativeGScore < gScore.getOrDefault(neighbour, Double.MAX_VALUE)) {
                     cameFrom.put(neighbour, new Object[] { current, angle });
@@ -208,6 +218,7 @@ public class FlightPathGenerator {
      */
     private FlightPathNode[] reconstructPath(Map<LngLat, Object[]> cameFrom, LngLat current) {
         List<FlightPathNode> totalPath = new LinkedList<>();
+        // Follow the path backwards, and add each node to the total path.
         while (current != null) {
             Object[] cameFromCurrent = cameFrom.get(current);
             if (cameFromCurrent != null) {

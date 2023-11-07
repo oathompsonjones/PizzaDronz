@@ -52,6 +52,9 @@ public class FlightPathNodeGeoJSONSerializer extends StdSerializer<FlightPathNod
         }
         jsonGenerator.writeEndArray();
         jsonGenerator.writeEndObject();
+        jsonGenerator.writeObjectFieldStart("properties");
+        jsonGenerator.writeStringField("name", "Flight Path");
+        jsonGenerator.writeEndObject();
         jsonGenerator.writeEndObject();
         jsonGenerator.writeEndArray();
         jsonGenerator.writeEndObject();

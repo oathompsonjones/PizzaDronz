@@ -3,6 +3,7 @@ package uk.ac.ed.inf;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 import uk.ac.ed.inf.Serializers.FlightPathNodeGeoJSONSerializer;
 import uk.ac.ed.inf.Serializers.FlightPathNodeJSONSerializer;
 import uk.ac.ed.inf.Serializers.OrderJSONSerializer;
@@ -112,15 +113,7 @@ public class PizzaDronz {
      * @param date The date to generate the JSON files for.
      */
     private void generateDeliveryJSON(LocalDate date) {
-        String fileName = "deliveries-" + date.toString() + ".json";
-        try {
-            SimpleModule serializationModule = new SimpleModule().addSerializer(Order.class, new OrderJSONSerializer());
-            new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT).registerModule(serializationModule).writeValue(new File(fileName), orders);
-        } catch (Exception e) {
-            System.err.println(e.getMessage());
-        } finally {
-            System.out.println("Wrote delivery data in " + fileName + " after " + ((System.nanoTime() - startTime) / 1_000_000_000.0) + "s");
-        }
+        writeFile("deliveries-" + date + ".json", Order.class, new OrderJSONSerializer(), orders);
     }
 
     /**
@@ -129,15 +122,7 @@ public class PizzaDronz {
      * @param date The date to generate the JSON files for.
      */
     private void generateFlightPathJSON(LocalDate date) {
-        String fileName = "flightpath-" + date.toString() + ".json";
-        try {
-            SimpleModule serializationModule = new SimpleModule().addSerializer(FlightPathNode.class, new FlightPathNodeJSONSerializer());
-            new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT).registerModule(serializationModule).writeValue(new File(fileName), flightPath);
-        } catch (Exception e) {
-            System.err.println(e.getMessage());
-        } finally {
-            System.out.println("Wrote flight path data in " + fileName + " after " + ((System.nanoTime() - startTime) / 1_000_000_000.0) + "s");
-        }
+        writeFile("flightpath-" + date + ".json", FlightPathNode.class, new FlightPathNodeJSONSerializer(), flightPath);
     }
 
     /**
@@ -146,14 +131,25 @@ public class PizzaDronz {
      * @param date The date to generate the GeoJSON files for.
      */
     private void generateFlightPathGeoJSON(LocalDate date) {
-        String fileName = "drone-" + date.toString() + ".geojson";
+        writeFile("drone-" + date + ".geojson", FlightPathNode[].class, new FlightPathNodeGeoJSONSerializer(), flightPath);
+    }
+
+    /**
+     * Writes the given content to the given file.
+     *
+     * @param fileName   The name of the file to write to.
+     * @param dataType   The class of the data type.
+     * @param serializer The serializer to use.
+     * @param content    The content to write.
+     * @param <T>        The type of the data.
+     */
+    private <T> void writeFile(String fileName, Class<T> dataType, StdSerializer<T> serializer, Object content) {
         try {
-            SimpleModule serializationModule = new SimpleModule().addSerializer(FlightPathNode[].class, new FlightPathNodeGeoJSONSerializer());
-            new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT).registerModule(serializationModule).writeValue(new File(fileName), flightPath);
+            SimpleModule serializationModule = new SimpleModule().addSerializer(dataType, serializer);
+            new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT).registerModule(serializationModule).writeValue(new File(fileName), content);
+            System.out.println("Wrote data to " + fileName + " after " + ((System.nanoTime() - startTime) / 1_000_000_000.0) + "s");
         } catch (Exception e) {
             System.err.println(e.getMessage());
-        } finally {
-            System.out.println("Wrote flight path GeoJSON data in " + fileName + " after " + ((System.nanoTime() - startTime) / 1_000_000_000.0) + "s");
         }
     }
 }

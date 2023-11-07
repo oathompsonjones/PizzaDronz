@@ -60,13 +60,20 @@ public class PizzaDronz {
      * @param date   The date to generate the flight paths for.
      */
     public PizzaDronz(String apiUrl, LocalDate date) {
+        // Set up the RESTManager and the FlightPathGenerator.
         restManager = new RESTManager(apiUrl);
         flightPathGenerator = new FlightPathGenerator(restManager.getCentralArea(), restManager.getNoFlyZones(), restManager.getRestaurants());
         System.out.println("Setup after " + ((System.nanoTime() - startTime) / 1_000_000_000.0) + "s");
+
+        // Fetch and validate the orders.
         Order[] validOrders = fetchValidOrders(date);
         System.out.println("Fetched " + validOrders.length + " valid orders after " + ((System.nanoTime() - startTime) / 1_000_000_000.0) + "s");
+
+        // Generate the flight path.
         flightPath = flightPathGenerator.generateFullPath(validOrders);
         System.out.println("Generated flight path after " + ((System.nanoTime() - startTime) / 1_000_000_000.0) + "s");
+
+        // Generate the JSON files.
         generateFlightPathJSON(date);
         generateFlightPathGeoJSON(date);
         generateDeliveryJSON(date);

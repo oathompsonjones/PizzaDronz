@@ -100,16 +100,17 @@ public class LngLatHandler implements LngLatHandling {
     }
 
     /**
-     * Calculates the next position of the drone in each of the 16 cardinal directions
+     * Calculates the neighbours of a position
      *
      * @param position the position to calculate the neighbours of
-     * @return an array of the next positions of the drone in each of the 16 cardinal directions
+     * @param count    the number of neighbours to calculate
+     * @return the neighbours of the position
      */
-    public LngLat[] getNeighbours(LngLat position, int count) {
-        LngLat[] neighbours = new LngLat[count];
-        double   angle      = 360.0 / count;
+    public LngLatAngle[] getNeighbours(LngLat position, int count) {
+        LngLatAngle[] neighbours = new LngLatAngle[count];
+        double        angle      = 360.0 / count;
         for (int i = 0; i < count; i++)
-            neighbours[i] = nextPosition(position, i * angle);
+            neighbours[i] = new LngLatAngle(nextPosition(position, i * angle), i * angle);
         return neighbours;
     }
 }

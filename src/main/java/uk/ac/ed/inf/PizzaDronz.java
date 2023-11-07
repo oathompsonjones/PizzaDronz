@@ -66,6 +66,7 @@ public class PizzaDronz {
         generateFlightPathJSON(date);
         generateFlightPathGeoJSON(date);
         generateDeliveryJSON(date);
+        System.out.println("Finished after " + ((System.nanoTime() - startTime) / 1_000_000_000.0) + "s");
     }
 
     /**

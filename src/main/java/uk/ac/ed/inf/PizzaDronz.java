@@ -89,8 +89,8 @@ public class PizzaDronz {
     private Order[] fetchValidOrders() {
         Restaurant[] restaurants = restManager.getRestaurants();
         orders = restManager.getOrders();
-        Order[] validatedOrders = Arrays.stream(orders).map(order -> orderValidator.validateOrder(order, restaurants)).toArray(Order[]::new);
-        return Arrays.stream(validatedOrders).filter(order -> order.getOrderStatus() == OrderStatus.VALID_BUT_NOT_DELIVERED).toArray(Order[]::new);
+        // Each order in this.orders will be validated as a side effect, before filtering out any invalid orders.
+        return Arrays.stream(orders).map(order -> orderValidator.validateOrder(order, restaurants)).filter(order -> order.getOrderStatus() == OrderStatus.VALID_BUT_NOT_DELIVERED).toArray(Order[]::new);
     }
 
     /**
@@ -102,8 +102,8 @@ public class PizzaDronz {
     private Order[] fetchValidOrders(LocalDate date) {
         Restaurant[] restaurants = restManager.getRestaurants();
         orders = restManager.getOrders(date);
-        Order[] validatedOrders = Arrays.stream(orders).map(order -> orderValidator.validateOrder(order, restaurants)).toArray(Order[]::new);
-        return Arrays.stream(validatedOrders).filter(order -> order.getOrderStatus() == OrderStatus.VALID_BUT_NOT_DELIVERED).toArray(Order[]::new);
+        // Each order in this.orders will be validated as a side effect, before filtering out any invalid orders.
+        return Arrays.stream(orders).map(order -> orderValidator.validateOrder(order, restaurants)).filter(order -> order.getOrderStatus() == OrderStatus.VALID_BUT_NOT_DELIVERED).toArray(Order[]::new);
     }
 
     /**

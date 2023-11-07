@@ -82,8 +82,10 @@ public class FlightPathGenerator {
     private FlightPathNode[] generate(Order order) {
         Restaurant restaurant = getOrderRestaurant(order, restaurants);
         assert restaurant != null;
+
+        // Set the start position to the restaurant, and the goal position to Appleton Tower.
         LngLat start = restaurant.location();
-        LngLat goal  = PizzaDronz.appletonTower;
+        LngLat goal  = new LngLat(-3.186874, 55.944494);
 
         // Fetch the flight from the cache, or compute it if it is not in the cache.
         FlightPathNode[] path = cache.computeIfAbsent(restaurant.name(), k -> aStar(start, goal, 16));

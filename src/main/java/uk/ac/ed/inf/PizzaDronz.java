@@ -8,7 +8,6 @@ import uk.ac.ed.inf.Serializers.FlightPathNodeGeoJSONSerializer;
 import uk.ac.ed.inf.Serializers.FlightPathNodeJSONSerializer;
 import uk.ac.ed.inf.Serializers.OrderJSONSerializer;
 import uk.ac.ed.inf.ilp.constant.OrderStatus;
-import uk.ac.ed.inf.ilp.data.LngLat;
 import uk.ac.ed.inf.ilp.data.Order;
 import uk.ac.ed.inf.ilp.data.Restaurant;
 
@@ -21,6 +20,10 @@ import java.util.Arrays;
  */
 public class PizzaDronz {
     /**
+     * Stores the start time of the application.
+     */
+    public static final long                startTime      = System.nanoTime();
+    /**
      * Creates an instance of the {@link OrderValidator} class.
      */
     public static final OrderValidator      orderValidator = new OrderValidator();
@@ -28,14 +31,6 @@ public class PizzaDronz {
      * Creates an instance of the {@link LngLatHandler} class.
      */
     public static final LngLatHandler       lngLatHandler  = new LngLatHandler();
-    /**
-     * Stores the location of the Appleton Tower.
-     */
-    public static final LngLat              appletonTower  = new LngLat(-3.186874, 55.944494);
-    /**
-     * Stores the start time of the application.
-     */
-    public static final long                startTime      = System.nanoTime();
     /**
      * Stores the instance of the {@link FlightPathGenerator} class.
      */

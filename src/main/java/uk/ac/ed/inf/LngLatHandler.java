@@ -15,13 +15,13 @@ public class LngLatHandler implements LngLatHandling {
     /**
      * Calculates the distance between two points
      *
-     * @param startPosition the position to calculate the distance from
-     * @param endPosition   the position to calculate the distance to
+     * @param start the position to calculate the distance from
+     * @param end   the position to calculate the distance to
      * @return the distance between the two points
      */
-    public double distanceTo(LngLat startPosition, LngLat endPosition) {
+    public double distanceTo(LngLat start, LngLat end) {
         // Uses the Pythagorean theorem to calculate the distance between two points
-        return Math.sqrt(Math.pow(endPosition.lng() - startPosition.lng(), 2) + Math.pow(endPosition.lat() - startPosition.lat(), 2));
+        return Math.sqrt(Math.pow(end.lng() - start.lng(), 2) + Math.pow(end.lat() - start.lat(), 2));
     }
 
     /**
@@ -50,7 +50,7 @@ public class LngLatHandler implements LngLatHandling {
         path.moveTo(vertices[0].lng(), vertices[0].lat());
         for (int i = 1; i < vertices.length; i++) {
             path.lineTo(vertices[i].lng(), vertices[i].lat());
-            // Determines if the position lies on the edge of the polygon, as the path.contains method does not include all the edges
+            // Determines if position lies on the edge of polygon, as path.contains does not include all edges
             LngLat vertex1 = vertices[i];
             LngLat vertex2 = vertices[(i + 1) % vertices.length];
             if (distanceTo(position, vertex1) + distanceTo(position, vertex2) == distanceTo(vertex1, vertex2))
@@ -76,8 +76,7 @@ public class LngLatHandler implements LngLatHandling {
             LngLat vertex2 = vertices[(i + 1) % vertices.length];
             Line2D line1   = new Line2D.Double(pos1.lng(), pos1.lat(), pos2.lng(), pos2.lat());
             Line2D line2   = new Line2D.Double(vertex1.lng(), vertex1.lat(), vertex2.lng(), vertex2.lat());
-            if (line1.intersectsLine(line2))
-                return true;
+            if (line1.intersectsLine(line2)) return true;
         }
         return false;
     }

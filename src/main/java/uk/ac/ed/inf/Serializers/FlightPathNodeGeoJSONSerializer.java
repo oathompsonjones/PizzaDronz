@@ -30,34 +30,34 @@ public class FlightPathNodeGeoJSONSerializer extends StdSerializer<FlightPathNod
     /**
      * Serializes an array of {@link FlightPathNode} objects to GeoJSON.
      *
-     * @param flightPathNodes The array of {@link FlightPathNode} objects to serialize.
-     * @param jsonGenerator   The {@link JsonGenerator} to use.
-     * @param serializer      The {@link SerializerProvider} to use.
+     * @param path       The array of {@link FlightPathNode} objects to serialize.
+     * @param json       The {@link JsonGenerator} to use.
+     * @param serializer The {@link SerializerProvider} to use.
      * @throws IOException If an I/O error occurs.
      */
     @Override
-    public void serialize(FlightPathNode[] flightPathNodes, JsonGenerator jsonGenerator, SerializerProvider serializer) throws IOException {
-        jsonGenerator.writeStartObject();
-        jsonGenerator.writeStringField("type", "FeatureCollection");
-        jsonGenerator.writeArrayFieldStart("features");
-        jsonGenerator.writeStartObject();
-        jsonGenerator.writeStringField("type", "Feature");
-        jsonGenerator.writeObjectFieldStart("geometry");
-        jsonGenerator.writeStringField("type", "LineString");
-        jsonGenerator.writeArrayFieldStart("coordinates");
-        for (FlightPathNode flightPathNode : flightPathNodes) {
-            jsonGenerator.writeStartArray();
-            jsonGenerator.writeNumber(flightPathNode.fromCoordinate().lng());
-            jsonGenerator.writeNumber(flightPathNode.fromCoordinate().lat());
-            jsonGenerator.writeEndArray();
+    public void serialize(FlightPathNode[] path, JsonGenerator json, SerializerProvider serializer) throws IOException {
+        json.writeStartObject();
+        json.writeStringField("type", "FeatureCollection");
+        json.writeArrayFieldStart("features");
+        json.writeStartObject();
+        json.writeStringField("type", "Feature");
+        json.writeObjectFieldStart("geometry");
+        json.writeStringField("type", "LineString");
+        json.writeArrayFieldStart("coordinates");
+        for (FlightPathNode node : path) {
+            json.writeStartArray();
+            json.writeNumber(node.fromCoordinate().lng());
+            json.writeNumber(node.fromCoordinate().lat());
+            json.writeEndArray();
         }
-        jsonGenerator.writeEndArray();
-        jsonGenerator.writeEndObject();
-        jsonGenerator.writeObjectFieldStart("properties");
-        jsonGenerator.writeStringField("name", "Flight Path");
-        jsonGenerator.writeEndObject();
-        jsonGenerator.writeEndObject();
-        jsonGenerator.writeEndArray();
-        jsonGenerator.writeEndObject();
+        json.writeEndArray();
+        json.writeEndObject();
+        json.writeObjectFieldStart("properties");
+        json.writeStringField("name", "Flight Path");
+        json.writeEndObject();
+        json.writeEndObject();
+        json.writeEndArray();
+        json.writeEndObject();
     }
 }

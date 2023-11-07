@@ -57,12 +57,16 @@ public class PizzaDronz {
     public PizzaDronz(String apiUrl, LocalDate date) {
         // Set up the RESTManager and the FlightPathGenerator.
         restManager = new RESTManager(apiUrl);
-        flightPathGenerator = new FlightPathGenerator(restManager.getCentralArea(), restManager.getNoFlyZones(), restManager.getRestaurants());
+        flightPathGenerator = new FlightPathGenerator(restManager.getCentralArea(),
+                                                      restManager.getNoFlyZones(),
+                                                      restManager.getRestaurants()
+        );
         System.out.println("Setup after " + ((System.nanoTime() - startTime) / 1_000_000_000.0) + "s");
 
         // Fetch and validate the orders.
         Order[] validOrders = fetchValidOrders(date);
-        System.out.println("Fetched " + validOrders.length + " valid orders after " + ((System.nanoTime() - startTime) / 1_000_000_000.0) + "s");
+        System.out.println("Fetched " + validOrders.length + " valid orders after " + ((System.nanoTime() - startTime)
+                                                                                       / 1_000_000_000.0) + "s");
 
         // Generate the flight path.
         flightPath = flightPathGenerator.generateFullPath(validOrders);
@@ -85,18 +89,6 @@ public class PizzaDronz {
     }
 
     /**
-     * Fetches and validates all orders.
-     *
-     * @return The valid orders.
-     */
-    private Order[] fetchValidOrders() {
-        Restaurant[] restaurants = restManager.getRestaurants();
-        orders = restManager.getOrders();
-        // Each order in this.orders will be validated as a side effect, before filtering out any invalid orders.
-        return Arrays.stream(orders).filter(order -> orderValidator.validateOrder(order, restaurants).getOrderStatus() == OrderStatus.VALID_BUT_NOT_DELIVERED).toArray(Order[]::new);
-    }
-
-    /**
      * Fetches and validates all orders for the given date.
      *
      * @param date The date to fetch the orders for.
@@ -106,7 +98,11 @@ public class PizzaDronz {
         Restaurant[] restaurants = restManager.getRestaurants();
         orders = restManager.getOrders(date);
         // Each order in this.orders will be validated as a side effect, before filtering out any invalid orders.
-        return Arrays.stream(orders).filter(order -> orderValidator.validateOrder(order, restaurants).getOrderStatus() == OrderStatus.VALID_BUT_NOT_DELIVERED).toArray(Order[]::new);
+        return Arrays
+                .stream(orders)
+                .filter(order -> orderValidator.validateOrder(order, restaurants).getOrderStatus()
+                                 == OrderStatus.VALID_BUT_NOT_DELIVERED)
+                .toArray(Order[]::new);
     }
 
     /**
@@ -133,7 +129,11 @@ public class PizzaDronz {
      * @param date The date to generate the GeoJSON files for.
      */
     private void generateFlightPathGeoJSON(LocalDate date) {
-        writeFile("drone-" + date + ".geojson", FlightPathNode[].class, new FlightPathNodeGeoJSONSerializer(), flightPath);
+        writeFile("drone-" + date + ".geojson",
+                  FlightPathNode[].class,
+                  new FlightPathNodeGeoJSONSerializer(),
+                  flightPath
+                 );
     }
 
     /**
@@ -147,9 +147,14 @@ public class PizzaDronz {
      */
     private <T> void writeFile(String fileName, Class<T> dataType, StdSerializer<T> serializer, Object content) {
         try {
-            SimpleModule serializationModule = new SimpleModule().addSerializer(dataType, serializer);
-            new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT).registerModule(serializationModule).writeValue(new File(fileName), content);
-            System.out.println("Wrote data to " + fileName + " after " + ((System.nanoTime() - startTime) / 1_000_000_000.0) + "s");
+            SimpleModule module = new SimpleModule().addSerializer(dataType, serializer);
+            new ObjectMapper()
+                    .enable(SerializationFeature.INDENT_OUTPUT)
+                    .registerModule(module)
+                    .writeValue(new File(fileName), content);
+            System.out.println(
+                    "Wrote data to " + fileName + " after " + ((System.nanoTime() - startTime) / 1_000_000_000.0)
+                    + "s");
         } catch (Exception e) {
             System.err.println(e.getMessage());
         }

@@ -5,26 +5,42 @@ import uk.ac.ed.inf.ilp.data.LngLat;
 /**
  * Stores a node in a flight path.
  */
-public record FlightPathNode(String orderNo, LngLat fromCoordinate, double angle, LngLat toCoordinate,
-                             int ticksSinceStartOfCalculation) {
+public record FlightPathNode(
+        String orderNo,
+        LngLat fromCoordinate,
+        double angle,
+        LngLat toCoordinate,
+        int ticksSinceStartOfCalculation
+) {
     /**
      * Creates an instance of the {@link FlightPathNode} class.
      *
-     * @param orderNo        The order number.
-     * @param flightPathNode The {@link FlightPathNode} to copy.
+     * @param orderNo The order number.
+     * @param node    The {@link FlightPathNode} to copy.
      */
-    public FlightPathNode(String orderNo, FlightPathNode flightPathNode) {
-        this(orderNo, flightPathNode.fromCoordinate, flightPathNode.angle, flightPathNode.toCoordinate, (int) (System.nanoTime() - PizzaDronz.startTime));
+    public FlightPathNode(String orderNo, FlightPathNode node) {
+        this(orderNo,
+             node.fromCoordinate,
+             node.angle,
+             node.toCoordinate,
+             (int) (System.nanoTime() - PizzaDronz.startTime)
+            );
     }
 
     /**
      * Creates an instance of the {@link FlightPathNode} class.
      *
-     * @param angle          The angle between the two coordinates.
-     * @param flightPathNode The {@link FlightPathNode} to copy.
+     * @param angle The angle between the two coordinates.
+     * @param node  The {@link FlightPathNode} to copy.
      */
-    public FlightPathNode(double angle, FlightPathNode flightPathNode) {
-        this(flightPathNode.orderNo, flightPathNode.fromCoordinate, angle, flightPathNode.toCoordinate, (int) (System.nanoTime() - PizzaDronz.startTime));
+    public FlightPathNode(double angle, FlightPathNode node) {
+        this(
+                node.orderNo,
+                node.fromCoordinate,
+                angle,
+                node.toCoordinate,
+                (int) (System.nanoTime() - PizzaDronz.startTime)
+            );
     }
 
     /**

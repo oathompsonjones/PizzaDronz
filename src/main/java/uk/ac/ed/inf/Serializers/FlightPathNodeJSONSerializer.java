@@ -30,21 +30,21 @@ public class FlightPathNodeJSONSerializer extends StdSerializer<FlightPathNode> 
     /**
      * Serializes a {@link FlightPathNode} object to JSON.
      *
-     * @param flightPathNode The {@link FlightPathNode} object to serialize.
-     * @param jsonGenerator  The {@link JsonGenerator} to use.
-     * @param serializer     The {@link SerializerProvider} to use.
+     * @param node       The {@link FlightPathNode} object to serialize.
+     * @param json       The {@link JsonGenerator} to use.
+     * @param serializer The {@link SerializerProvider} to use.
      * @throws IOException If an I/O error occurs.
      */
     @Override
-    public void serialize(FlightPathNode flightPathNode, JsonGenerator jsonGenerator, SerializerProvider serializer) throws IOException {
-        jsonGenerator.writeStartObject();
-        jsonGenerator.writeStringField("orderNo", flightPathNode.orderNo());
-        jsonGenerator.writeNumberField("fromLongitude", flightPathNode.fromCoordinate() == null ? null : flightPathNode.fromCoordinate().lng());
-        jsonGenerator.writeNumberField("fromLatitude", flightPathNode.fromCoordinate() == null ? null : flightPathNode.fromCoordinate().lat());
-        jsonGenerator.writeNumberField("angle", flightPathNode.angle());
-        jsonGenerator.writeNumberField("toLongitude", flightPathNode.toCoordinate() == null ? null : flightPathNode.toCoordinate().lng());
-        jsonGenerator.writeNumberField("toLatitude", flightPathNode.toCoordinate() == null ? null : flightPathNode.toCoordinate().lat());
-        jsonGenerator.writeNumberField("ticksSinceStartOfCalculation", flightPathNode.ticksSinceStartOfCalculation());
-        jsonGenerator.writeEndObject();
+    public void serialize(FlightPathNode node, JsonGenerator json, SerializerProvider serializer) throws IOException {
+        json.writeStartObject();
+        json.writeStringField("orderNo", node.orderNo());
+        json.writeNumberField("fromLongitude", node.fromCoordinate().lng());
+        json.writeNumberField("fromLatitude", node.fromCoordinate().lat());
+        json.writeNumberField("angle", node.angle());
+        json.writeNumberField("toLongitude", node.toCoordinate().lng());
+        json.writeNumberField("toLatitude", node.toCoordinate().lat());
+        json.writeNumberField("ticksSinceStartOfCalculation", node.ticksSinceStartOfCalculation());
+        json.writeEndObject();
     }
 }

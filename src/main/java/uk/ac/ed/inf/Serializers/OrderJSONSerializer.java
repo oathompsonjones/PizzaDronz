@@ -30,18 +30,18 @@ public class OrderJSONSerializer extends StdSerializer<Order> {
     /**
      * Serializes an {@link Order} object to JSON.
      *
-     * @param order         The {@link Order} object to serialize.
-     * @param jsonGenerator The {@link JsonGenerator} to use.
-     * @param serializer    The {@link SerializerProvider} to use.
+     * @param order      The {@link Order} object to serialize.
+     * @param json       The {@link JsonGenerator} to use.
+     * @param serializer The {@link SerializerProvider} to use.
      * @throws IOException If an I/O error occurs.
      */
     @Override
-    public void serialize(Order order, JsonGenerator jsonGenerator, SerializerProvider serializer) throws IOException {
-        jsonGenerator.writeStartObject();
-        jsonGenerator.writeStringField("orderNo", order.getOrderNo());
-        jsonGenerator.writeStringField("orderStatus", order.getOrderStatus().toString());
-        jsonGenerator.writeStringField("orderValidationCode", order.getOrderValidationCode().toString());
-        jsonGenerator.writeNumberField("costInPence", order.getPriceTotalInPence());
-        jsonGenerator.writeEndObject();
+    public void serialize(Order order, JsonGenerator json, SerializerProvider serializer) throws IOException {
+        json.writeStartObject();
+        json.writeStringField("orderNo", order.getOrderNo());
+        json.writeStringField("orderStatus", order.getOrderStatus().toString());
+        json.writeStringField("orderValidationCode", order.getOrderValidationCode().toString());
+        json.writeNumberField("costInPence", order.getPriceTotalInPence());
+        json.writeEndObject();
     }
 }

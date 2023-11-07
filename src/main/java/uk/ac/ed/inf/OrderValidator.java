@@ -19,47 +19,47 @@ public class OrderValidator implements OrderValidation {
     /**
      * Validate an order and deliver a validated version where the OrderStatus and OrderValidationCode are set accordingly.
      *
-     * @param orderToValidate    the order which needs validation
+     * @param order              the order which needs validation
      * @param definedRestaurants the array of defined restaurants
      * @return the validated order
      */
-    public Order validateOrder(Order orderToValidate, Restaurant[] definedRestaurants) {
+    public Order validateOrder(Order order, Restaurant[] definedRestaurants) {
         // Check that the number of pizzas is valid
-        if (!pizzaCountIsValid(orderToValidate.getPizzasInOrder()))
-            return setValidationCodeAndStatus(orderToValidate, OrderValidationCode.MAX_PIZZA_COUNT_EXCEEDED);
+        if (!pizzaCountIsValid(order.getPizzasInOrder()))
+            return setValidationCodeAndStatus(order, OrderValidationCode.MAX_PIZZA_COUNT_EXCEEDED);
 
         // Check that all the pizzas exist
-        Restaurant[] pizzaRestaurants = pizzasAllExist(orderToValidate.getPizzasInOrder(), definedRestaurants);
+        Restaurant[] pizzaRestaurants = pizzasAllExist(order.getPizzasInOrder(), definedRestaurants);
         if (Arrays.stream(pizzaRestaurants).anyMatch(Objects::isNull))
-            return setValidationCodeAndStatus(orderToValidate, OrderValidationCode.PIZZA_NOT_DEFINED);
+            return setValidationCodeAndStatus(order, OrderValidationCode.PIZZA_NOT_DEFINED);
 
         // Check that all the pizzas are from the same restaurant
         Restaurant restaurant = pizzaAreFromSameRestaurant(pizzaRestaurants);
         if (restaurant == null)
-            return setValidationCodeAndStatus(orderToValidate, OrderValidationCode.PIZZA_FROM_MULTIPLE_RESTAURANTS);
+            return setValidationCodeAndStatus(order, OrderValidationCode.PIZZA_FROM_MULTIPLE_RESTAURANTS);
 
         // Check that the restaurant is open
-        if (!restaurantIsOpen(restaurant, orderToValidate.getOrderDate()))
-            return setValidationCodeAndStatus(orderToValidate, OrderValidationCode.RESTAURANT_CLOSED);
+        if (!restaurantIsOpen(restaurant, order.getOrderDate()))
+            return setValidationCodeAndStatus(order, OrderValidationCode.RESTAURANT_CLOSED);
 
         // Check that the total price is correct
-        if (!totalIsCorrect(orderToValidate.getPriceTotalInPence(), orderToValidate.getPizzasInOrder(), restaurant.menu()))
-            return setValidationCodeAndStatus(orderToValidate, OrderValidationCode.TOTAL_INCORRECT);
+        if (!totalIsCorrect(order.getPriceTotalInPence(), order.getPizzasInOrder(), restaurant.menu()))
+            return setValidationCodeAndStatus(order, OrderValidationCode.TOTAL_INCORRECT);
 
         // Check that the credit card number is valid
-        if (!creditCardNumberIsValid(orderToValidate.getCreditCardInformation().getCreditCardNumber()))
-            return setValidationCodeAndStatus(orderToValidate, OrderValidationCode.CARD_NUMBER_INVALID);
+        if (!creditCardNumberIsValid(order.getCreditCardInformation().getCreditCardNumber()))
+            return setValidationCodeAndStatus(order, OrderValidationCode.CARD_NUMBER_INVALID);
 
         // Check that the expiry date is valid
-        if (!creditCardExpiryIsValid(orderToValidate.getCreditCardInformation().getCreditCardExpiry(), orderToValidate.getOrderDate()))
-            return setValidationCodeAndStatus(orderToValidate, OrderValidationCode.EXPIRY_DATE_INVALID);
+        if (!creditCardExpiryIsValid(order.getCreditCardInformation().getCreditCardExpiry(), order.getOrderDate()))
+            return setValidationCodeAndStatus(order, OrderValidationCode.EXPIRY_DATE_INVALID);
 
         // Check that the CVV is valid
-        if (!creditCardCVVIsValid(orderToValidate.getCreditCardInformation().getCvv()))
-            return setValidationCodeAndStatus(orderToValidate, OrderValidationCode.CVV_INVALID);
+        if (!creditCardCVVIsValid(order.getCreditCardInformation().getCvv()))
+            return setValidationCodeAndStatus(order, OrderValidationCode.CVV_INVALID);
 
         // If all the checks pass, the order is valid
-        return setValidationCodeAndStatus(orderToValidate, OrderValidationCode.NO_ERROR, OrderStatus.VALID_BUT_NOT_DELIVERED);
+        return setValidationCodeAndStatus(order, OrderValidationCode.NO_ERROR, OrderStatus.VALID_BUT_NOT_DELIVERED);
     }
 
     /**
@@ -118,8 +118,7 @@ public class OrderValidator implements OrderValidation {
         }
 
         // Check that those numbers are valid
-        if (expiryMonth < 1 || expiryMonth > 12 || expiryYear < 0 || expiryYear > 99)
-            return false;
+        if (expiryMonth < 1 || expiryMonth > 12 || expiryYear < 0 || expiryYear > 99) return false;
 
         // Check that the expiry date has not passed
         int currentMonth = orderDate.getMonthValue();
@@ -141,18 +140,17 @@ public class OrderValidator implements OrderValidation {
     /**
      * Check that the total price of an order is correct.
      *
-     * @param totalOnOrder  the total price of the order
-     * @param pizzasInOrder the pizzas on the order
-     * @param pizzasOnMenu  the pizzas available on the restaurant menu
+     * @param totalOnOrder the total price of the order
+     * @param pizzas       the pizzas on the order
+     * @param menu         the pizzas available on the restaurant menu
      * @return whether the total price of the order is correct
      */
-    private boolean totalIsCorrect(int totalOnOrder, Pizza[] pizzasInOrder, Pizza[] pizzasOnMenu) {
+    private boolean totalIsCorrect(int totalOnOrder, Pizza[] pizzas, Pizza[] menu) {
         // Check that the price of each pizza sums to the total price of the order.
         int total = SystemConstants.ORDER_CHARGE_IN_PENCE;
-        for (Pizza pizza : pizzasInOrder) {
+        for (Pizza pizza : pizzas) {
             // Find the pizza on the menu
-            Pizza menuPizza = Arrays.stream(pizzasOnMenu).filter(p -> Objects.equals(p.name(), pizza.name())).findFirst().orElse(null);
-            assert menuPizza != null;
+            Pizza menuPizza = Arrays.stream(menu).filter(p -> p.name().equals(pizza.name())).toArray(Pizza[]::new)[0];
             // Add the price of the pizza to the total
             total += menuPizza.priceInPence();
         }
@@ -179,8 +177,7 @@ public class OrderValidator implements OrderValidation {
      */
     private Restaurant[] pizzasAllExist(Pizza[] pizzas, Restaurant[] restaurants) {
         // Check that there is at least one pizza in the order
-        if (pizzas.length == 0)
-            return new Restaurant[] { null };
+        if (pizzas.length == 0) return new Restaurant[] { null };
         Restaurant[] pizzaRestaurants = new Restaurant[pizzas.length];
         // For each pizza...
         for (int i = 0; i < pizzas.length; i++) {
@@ -190,7 +187,7 @@ public class OrderValidator implements OrderValidation {
                 String[] pizzaNames = Arrays.stream(restaurant.menu()).map(Pizza::name).toArray(String[]::new);
                 for (String pizzaName : pizzaNames) {
                     // If the pizza is found, set the restaurant value in the array
-                    if (Objects.equals(pizzaName, pizzas[i].name())) {
+                    if (pizzaName.equals(pizzas[i].name())) {
                         pizzaRestaurants[i] = restaurant;
                         break;
                     }

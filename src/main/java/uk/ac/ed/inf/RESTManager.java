@@ -30,8 +30,7 @@ public class RESTManager {
      */
     public RESTManager(String baseUrl) {
         this.baseUrl = baseUrl;
-        if (!this.baseUrl.endsWith("/"))
-            this.baseUrl += "/";
+        if (!this.baseUrl.endsWith("/")) this.baseUrl += "/";
     }
 
     /**

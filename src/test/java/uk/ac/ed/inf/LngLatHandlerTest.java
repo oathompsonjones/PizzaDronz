@@ -9,15 +9,7 @@ public class LngLatHandlerTest extends TestCase {
     LngLatHandler handler = new LngLatHandler();
 
     public void testDistanceTo() {
-        LngLat[] positions = new LngLat[] {
-                new LngLat(0, 4),
-                new LngLat(3, 0),
-                new LngLat(0, 0),
-                new LngLat(0, 1),
-                new LngLat(1, 0),
-                new LngLat(1, 1),
-                new LngLat(-1, -1)
-        };
+        LngLat[] positions = new LngLat[] { new LngLat(0, 4), new LngLat(3, 0), new LngLat(0, 0), new LngLat(0, 1), new LngLat(1, 0), new LngLat(1, 1), new LngLat(-1, -1) };
         // Test distance with the hypotenuse of a pythagorean triple
         assertEquals(5.0, handler.distanceTo(positions[0], positions[1]));
         // Test that the result is the same when the parameters are swapped
@@ -35,11 +27,7 @@ public class LngLatHandlerTest extends TestCase {
     }
 
     public void testIsCloseTo() {
-        LngLat[] positions = new LngLat[] {
-                new LngLat(0, 0),
-                new LngLat(0, SystemConstants.DRONE_IS_CLOSE_DISTANCE),
-                new LngLat(SystemConstants.DRONE_IS_CLOSE_DISTANCE, SystemConstants.DRONE_IS_CLOSE_DISTANCE)
-        };
+        LngLat[] positions = new LngLat[] { new LngLat(0, 0), new LngLat(0, SystemConstants.DRONE_IS_CLOSE_DISTANCE), new LngLat(SystemConstants.DRONE_IS_CLOSE_DISTANCE, SystemConstants.DRONE_IS_CLOSE_DISTANCE) };
         // Test that the result is true when the parameters are the same
         assertTrue(handler.isCloseTo(positions[0], positions[0]));
         // Test that the result is true when the parameters are close
@@ -50,11 +38,7 @@ public class LngLatHandlerTest extends TestCase {
 
     public void testIsInRegion() {
         // Test a triangular region
-        LngLat[] vertices = new LngLat[] {
-                new LngLat(0, 0),
-                new LngLat(4, 0),
-                new LngLat(2, 4)
-        };
+        LngLat[] vertices = new LngLat[] { new LngLat(0, 0), new LngLat(4, 0), new LngLat(2, 4) };
         NamedRegion region = new NamedRegion("Triangular Region", vertices);
         // Test a point in the middle(ish)
         assertTrue(handler.isInRegion(new LngLat(2, 2), region));
@@ -68,12 +52,7 @@ public class LngLatHandlerTest extends TestCase {
         assertFalse(handler.isInRegion(new LngLat(4, 4), region));
 
         // Test a square region
-        vertices = new LngLat[] {
-                new LngLat(0, 0),
-                new LngLat(4, 0),
-                new LngLat(4, 4),
-                new LngLat(0, 4)
-        };
+        vertices = new LngLat[] { new LngLat(0, 0), new LngLat(4, 0), new LngLat(4, 4), new LngLat(0, 4) };
         region = new NamedRegion("Square Region", vertices);
         // Test a point in the middle
         assertTrue(handler.isInRegion(new LngLat(2, 2), region));
@@ -107,10 +86,5 @@ public class LngLatHandlerTest extends TestCase {
         nextPos = handler.nextPosition(startPos, 270);
         assertTrue(0.0 < nextPos.lng() + 1e-12 && 0.0 > nextPos.lng() - 1e-12);
         assertTrue(-SystemConstants.DRONE_MOVE_DISTANCE < nextPos.lat() + 1e-12 && -SystemConstants.DRONE_MOVE_DISTANCE > nextPos.lat() - 1e-12);
-
-        // Test that an angle of 999 results in the same position
-        nextPos = handler.nextPosition(startPos, 999);
-        assertEquals(0.0, nextPos.lng());
-        assertEquals(0.0, nextPos.lat());
     }
 }

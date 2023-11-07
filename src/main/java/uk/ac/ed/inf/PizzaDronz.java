@@ -52,22 +52,22 @@ public class PizzaDronz {
                                                           restManager.getNoFlyZones(),
                                                           restManager.getRestaurants()
         );
-        System.out.println("Setup after " + ((System.nanoTime() - startTime) / 1_000_000_000.0) + "s");
+        System.out.println("Setup after " + (System.nanoTime() - startTime) + "ns");
 
         // Fetch and validate the orders.
         var validOrders = fetchValidOrders(date);
-        System.out.println("Fetched " + validOrders.length + " valid orders after " + ((System.nanoTime() - startTime)
-                                                                                       / 1_000_000_000.0) + "s");
+        System.out.println(
+                "Fetched " + validOrders.length + " valid orders after " + (System.nanoTime() - startTime) + "ns");
 
         // Generate the flight path.
         flightPath = flightPathGenerator.generateFullPath(validOrders);
-        System.out.println("Generated flight path after " + ((System.nanoTime() - startTime) / 1_000_000_000.0) + "s");
+        System.out.println("Generated flight path after " + (System.nanoTime() - startTime) + "ns");
 
         // Generate the JSON files.
         generateFlightPathJSON(date);
         generateFlightPathGeoJSON(date);
         generateDeliveryJSON(date);
-        System.out.println("Finished after " + ((System.nanoTime() - startTime) / 1_000_000_000.0) + "s");
+        System.out.println("Finished after " + (System.nanoTime() - startTime) + "ns");
     }
 
     /**
@@ -136,16 +136,18 @@ public class PizzaDronz {
      * @param content    The content to write.
      * @param <T>        The type of the data.
      */
+    @SuppressWarnings("ResultOfMethodCallIgnored")
     private <T> void writeFile(String fileName, Class<T> dataType, StdSerializer<T> serializer, Object content) {
         try {
             var module = new SimpleModule().addSerializer(dataType, serializer);
+            var file   = new File("resultfiles/" + fileName);
+            file.getParentFile().mkdirs();
+            file.createNewFile();
             new ObjectMapper()
                     .enable(SerializationFeature.INDENT_OUTPUT)
                     .registerModule(module)
-                    .writeValue(new File(fileName), content);
-            System.out.println(
-                    "Wrote data to " + fileName + " after " + ((System.nanoTime() - startTime) / 1_000_000_000.0)
-                    + "s");
+                    .writeValue(file, content);
+            System.out.println("Wrote data to " + fileName + " after " + (System.nanoTime() - startTime) + "ns");
         } catch (Exception err) {
             System.err.println(err.getMessage());
         }

@@ -90,10 +90,6 @@ public class LngLatHandler implements LngLatHandling {
      * @return the next position of the drone
      */
     public LngLat nextPosition(LngLat startPosition, double angle) {
-        // If the angle is 999 the drone is hovering
-        if (angle == 999)
-            return startPosition;
-        // Uses trigonometry to calculate the new position
         double newLng = startPosition.lng() + Math.cos(Math.toRadians(angle)) * SystemConstants.DRONE_MOVE_DISTANCE;
         double newLat = startPosition.lat() + Math.sin(Math.toRadians(angle)) * SystemConstants.DRONE_MOVE_DISTANCE;
         return new LngLat(newLng, newLat);

@@ -142,7 +142,7 @@ public class FlightPathGenerator {
         long startTime = System.currentTimeMillis();
 
         // The set of nodes already evaluated.
-        Map<LngLat, Object[]> cameFrom = new HashMap<>();
+        Map<LngLat, FlightPathNode> cameFrom = new HashMap<>();
 
         // The cost of going from the start to each node.
         Map<LngLat, Double> gScore = new HashMap<>();
@@ -185,7 +185,7 @@ public class FlightPathGenerator {
                 // Update the neighbour's g-score and f-score, and add it to the open set.
                 double tentativeGScore = gScore.getOrDefault(current, Double.MAX_VALUE) + heuristic(current, neighbour);
                 if (tentativeGScore < gScore.getOrDefault(neighbour, Double.MAX_VALUE)) {
-                    cameFrom.put(neighbour, new Object[] { current, angle });
+                    cameFrom.put(neighbour, new FlightPathNode(current, angle, neighbour));
                     gScore.put(neighbour, tentativeGScore);
                     fScore.put(neighbour, tentativeGScore + heuristic(neighbour, goal));
                     openSet.add(neighbour);
@@ -216,16 +216,14 @@ public class FlightPathGenerator {
      * @param current  the current node
      * @return the path from the start to the given node
      */
-    private FlightPathNode[] reconstructPath(Map<LngLat, Object[]> cameFrom, LngLat current) {
+    private FlightPathNode[] reconstructPath(Map<LngLat, FlightPathNode> cameFrom, LngLat current) {
         List<FlightPathNode> totalPath = new LinkedList<>();
         // Follow the path backwards, and add each node to the total path.
         while (current != null) {
-            Object[] cameFromCurrent = cameFrom.get(current);
+            FlightPathNode cameFromCurrent = cameFrom.get(current);
             if (cameFromCurrent != null) {
-                LngLat node  = (LngLat) cameFromCurrent[0];
-                double angle = (double) cameFromCurrent[1];
-                totalPath.add(0, new FlightPathNode(node, angle, current));
-                current = node;
+                totalPath.add(0, cameFromCurrent);
+                current = cameFromCurrent.fromCoordinate();
             } else
                 current = null;
         }

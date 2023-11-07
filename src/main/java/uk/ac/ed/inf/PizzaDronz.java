@@ -83,7 +83,14 @@ public class PizzaDronz {
      */
     private void generateDeliveryJSON(LocalDate date) {
         String fileName = "deliveries-" + date.toString() + ".json";
-        writeFile(fileName, "");
+        try {
+            SimpleModule serializationModule = new SimpleModule().addSerializer(Order.class, new OrderJSONSerializer());
+            new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT).registerModule(serializationModule).writeValue(new File(fileName), orders);
+        } catch (Exception e) {
+            System.err.println(e.getMessage());
+        } finally {
+            System.out.println("Wrote delivery data in " + fileName + " after " + ((System.nanoTime() - startTime) / 1_000_000_000.0) + "s");
+        }
     }
 
     /**
@@ -93,7 +100,14 @@ public class PizzaDronz {
      */
     private void generateFlightPathJSON(LocalDate date) {
         String fileName = "flightpath-" + date.toString() + ".json";
-        writeFile(fileName, "");
+        try {
+            SimpleModule serializationModule = new SimpleModule().addSerializer(FlightPathNode.class, new FlightPathNodeJSONSerializer());
+            new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT).registerModule(serializationModule).writeValue(new File(fileName), flightPath);
+        } catch (Exception e) {
+            System.err.println(e.getMessage());
+        } finally {
+            System.out.println("Wrote flight path data in " + fileName + " after " + ((System.nanoTime() - startTime) / 1_000_000_000.0) + "s");
+        }
     }
 
     /**
@@ -103,22 +117,13 @@ public class PizzaDronz {
      */
     private void generateFlightPathGeoJSON(LocalDate date) {
         String fileName = "drone-" + date.toString() + ".geojson";
-        writeFile(fileName, "");
-    }
-
-    /**
-     * Writes the given data to the given file.
-     *
-     * @param name The name of the file to write to.
-     * @param data The data to write to the file.
-     */
-    private void writeFile(String name, String data) {
         try {
-            FileWriter fileWriter = new FileWriter(name);
-            fileWriter.write(data);
-            fileWriter.close();
-        } catch (IOException e) {
-            System.err.println("Error writing to file " + name);
+            SimpleModule serializationModule = new SimpleModule().addSerializer(FlightPathNode[].class, new FlightPathNodeGeoJSONSerializer());
+            new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT).registerModule(serializationModule).writeValue(new File(fileName), flightPath);
+        } catch (Exception e) {
+            System.err.println(e.getMessage());
+        } finally {
+            System.out.println("Wrote flight path GeoJSON data in " + fileName + " after " + ((System.nanoTime() - startTime) / 1_000_000_000.0) + "s");
         }
     }
 }

@@ -9,7 +9,6 @@ import uk.ac.ed.inf.Serializers.FlightPathNodeJSONSerializer;
 import uk.ac.ed.inf.Serializers.OrderJSONSerializer;
 import uk.ac.ed.inf.ilp.constant.OrderStatus;
 import uk.ac.ed.inf.ilp.data.Order;
-import uk.ac.ed.inf.ilp.data.Restaurant;
 
 import java.io.File;
 import java.time.LocalDate;
@@ -49,14 +48,14 @@ public class PizzaDronz {
     private PizzaDronz(String apiUrl, LocalDate date) {
         // Set up the RESTManager and the FlightPathGenerator.
         restManager = new RESTManager(apiUrl);
-        FlightPathGenerator flightPathGenerator = new FlightPathGenerator(restManager.getCentralArea(),
-                                                                          restManager.getNoFlyZones(),
-                                                                          restManager.getRestaurants()
+        var flightPathGenerator = new FlightPathGenerator(restManager.getCentralArea(),
+                                                          restManager.getNoFlyZones(),
+                                                          restManager.getRestaurants()
         );
         System.out.println("Setup after " + ((System.nanoTime() - startTime) / 1_000_000_000.0) + "s");
 
         // Fetch and validate the orders.
-        Order[] validOrders = fetchValidOrders(date);
+        var validOrders = fetchValidOrders(date);
         System.out.println("Fetched " + validOrders.length + " valid orders after " + ((System.nanoTime() - startTime)
                                                                                        / 1_000_000_000.0) + "s");
 
@@ -87,7 +86,7 @@ public class PizzaDronz {
      * @return The valid orders.
      */
     private Order[] fetchValidOrders(LocalDate date) {
-        Restaurant[] restaurants = restManager.getRestaurants();
+        var restaurants = restManager.getRestaurants();
         orders = restManager.getOrders(date);
         // Each order in this.orders will be validated as a side effect, before filtering out any invalid orders.
         return Arrays
@@ -139,7 +138,7 @@ public class PizzaDronz {
      */
     private <T> void writeFile(String fileName, Class<T> dataType, StdSerializer<T> serializer, Object content) {
         try {
-            SimpleModule module = new SimpleModule().addSerializer(dataType, serializer);
+            var module = new SimpleModule().addSerializer(dataType, serializer);
             new ObjectMapper()
                     .enable(SerializationFeature.INDENT_OUTPUT)
                     .registerModule(module)

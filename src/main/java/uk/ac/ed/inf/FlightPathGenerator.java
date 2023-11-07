@@ -78,9 +78,7 @@ public class FlightPathGenerator {
         assert restaurant != null;
         LngLat           start = restaurant.location();
         LngLat           goal  = PizzaDronz.appletonTower;
-        FlightPathNode[] path  = Arrays.stream(cache.computeIfAbsent(restaurant.name(), k -> aStar(start, goal, 16))).map(FlightPathNode::new).toArray(FlightPathNode[]::new);
-        for (FlightPathNode node : path)
-            node.setOrderNo(order.getOrderNo());
+        FlightPathNode[] path  = Arrays.stream(cache.computeIfAbsent(restaurant.name(), k -> aStar(start, goal, 16))).map(n -> new FlightPathNode(order.getOrderNo(), n)).toArray(FlightPathNode[]::new);
         order.setOrderStatus(path.length == 0 ? OrderStatus.VALID_BUT_NOT_DELIVERED : OrderStatus.DELIVERED);
         return path;
     }
@@ -111,8 +109,8 @@ public class FlightPathGenerator {
     private FlightPathNode[] reversePath(FlightPathNode[] path) {
         FlightPathNode[] reversedPath = new FlightPathNode[path.length];
         for (int i = 0; i < reversedPath.length; i++) {
-            reversedPath[i] = new FlightPathNode(path[path.length - i - 1]);
-            reversedPath[i].setAngle((reversedPath[i].angle() + 180) % 360);
+            FlightPathNode node = path[path.length - i - 1];
+            reversedPath[i] = new FlightPathNode((node.angle() + 180) % 360, node);
         }
         return reversedPath;
     }

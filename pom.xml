@@ -28,7 +28,7 @@
             <artifactId>data</artifactId>
             <version>1.0</version>
             <scope>system</scope>
-            <systemPath>${project.basedir}/IlpDataObjects.jar</systemPath>
+            <systemPath>${project.basedir}/libraries/IlpDataObjects.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>

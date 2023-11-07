@@ -103,9 +103,12 @@ public class FlightPathGenerator {
         var goal  = new LngLat(-3.186874, 55.944494);
 
         // Fetch the flight from the cache, or compute it if it is not in the cache.
-        var path = cache.computeIfAbsent(restaurant.name(), k -> aStar(start, goal, 16));
+        var path = cache.computeIfAbsent(restaurant.name(), __ -> aStar(start, goal, 16));
         // Build the path out of new FlightPathNodes, and set the order number.
-        path = Arrays.stream(path).map(n -> new FlightPathNode(order.getOrderNo(), n)).toArray(FlightPathNode[]::new);
+        path = Arrays
+                .stream(path)
+                .map(node -> new FlightPathNode(order.getOrderNo(), node))
+                .toArray(FlightPathNode[]::new);
 
         order.setOrderStatus(path.length == 0 ? OrderStatus.VALID_BUT_NOT_DELIVERED : OrderStatus.DELIVERED);
         return path;
@@ -169,9 +172,9 @@ public class FlightPathGenerator {
         fScore.put(start, heuristic(start, goal));
 
         // The set of currently discovered nodes that are not evaluated yet.
-        var openSet = new PriorityQueue<LngLat>(Comparator.comparingDouble(d -> fScore.getOrDefault(d,
-                                                                                                    Double.MAX_VALUE
-                                                                                                   )));
+        var openSet = new PriorityQueue<LngLat>(Comparator.comparingDouble(value -> fScore.getOrDefault(value,
+                                                                                                        Double.MAX_VALUE
+                                                                                                       )));
         openSet.add(start);
 
         while (!openSet.isEmpty()) {
@@ -196,7 +199,7 @@ public class FlightPathGenerator {
                 // If the neighbour is not in a legal position, skip it.
                 boolean crossesNoFlyZone = Arrays
                         .stream(noFlyZones)
-                        .anyMatch(r -> lngLatHandler.lineCrossesRegion(current, neighbour, r));
+                        .anyMatch(region -> lngLatHandler.lineCrossesRegion(current, neighbour, region));
                 boolean leavesCentralArea = currentInCentralArea && !lngLatHandler.isInCentralArea(neighbour,
                                                                                                    centralArea
                                                                                                   );

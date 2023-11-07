@@ -146,8 +146,8 @@ public class PizzaDronz {
             System.out.println(
                     "Wrote data to " + fileName + " after " + ((System.nanoTime() - startTime) / 1_000_000_000.0)
                     + "s");
-        } catch (Exception e) {
-            System.err.println(e.getMessage());
+        } catch (Exception err) {
+            System.err.println(err.getMessage());
         }
     }
 }

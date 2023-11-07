@@ -216,6 +216,6 @@ public class OrderValidator implements OrderValidation {
      */
     private boolean restaurantIsOpen(Restaurant restaurant, LocalDate orderDate) {
         // Check that the restaurant is open today
-        return Arrays.stream(restaurant.openingDays()).anyMatch(d -> d == orderDate.getDayOfWeek());
+        return Arrays.stream(restaurant.openingDays()).anyMatch(day -> day == orderDate.getDayOfWeek());
     }
 }

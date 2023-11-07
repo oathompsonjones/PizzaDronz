@@ -27,13 +27,13 @@ public class LngLatHandler implements LngLatHandling {
     /**
      * Checks if two points are close to each other
      *
-     * @param startPosition the position to check the distance from
-     * @param otherPosition the position to check the distance to
+     * @param start the position to check the distance from
+     * @param other the position to check the distance to
      * @return true if the distance between the two points is less than the close distance, false otherwise
      */
-    public boolean isCloseTo(LngLat startPosition, LngLat otherPosition) {
+    public boolean isCloseTo(LngLat start, LngLat other) {
         // Checks if the distance between two points is less than the close distance
-        return distanceTo(startPosition, otherPosition) <= SystemConstants.DRONE_IS_CLOSE_DISTANCE;
+        return distanceTo(start, other) <= SystemConstants.DRONE_IS_CLOSE_DISTANCE;
     }
 
     /**

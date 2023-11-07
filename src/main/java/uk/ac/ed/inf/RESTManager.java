@@ -52,7 +52,7 @@ public class RESTManager {
      */
     private Object GET(Endpoints endpoint, String args) {
         try {
-            return objectMapper.readValue(new URL(baseUrl + endpoint.getUrl() + args), endpoint.getReturnType());
+            return objectMapper.readValue(new URL(baseUrl + endpoint.getUrl() + args), endpoint.getClazz());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -100,10 +100,6 @@ public class RESTManager {
      */
     private enum Endpoints {
         /**
-         * The endpoint to check if the server is alive.
-         */
-        IS_ALIVE("isAlive", boolean.class),
-        /**
          * The endpoint to get the list of restaurants.
          */
         RESTAURANTS("restaurants", Restaurant[].class),
@@ -127,17 +123,17 @@ public class RESTManager {
         /**
          * The return type of the endpoint.
          */
-        private final Class<?> returnType;
+        private final Class<?> clazz;
 
         /**
          * Creates a new Endpoints object.
          *
-         * @param url        The URL of the endpoint.
-         * @param returnType The return type of the endpoint.
+         * @param url   The URL of the endpoint.
+         * @param clazz The return type of the endpoint.
          */
-        Endpoints(String url, Class<?> returnType) {
+        Endpoints(String url, Class<?> clazz) {
             this.url = url;
-            this.returnType = returnType;
+            this.clazz = clazz;
         }
 
         /**
@@ -154,8 +150,8 @@ public class RESTManager {
          *
          * @return The return type of the endpoint.
          */
-        public Class<?> getReturnType() {
-            return returnType;
+        public Class<?> getClazz() {
+            return clazz;
         }
     }
 }

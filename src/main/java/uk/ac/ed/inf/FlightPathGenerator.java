@@ -10,6 +10,10 @@ import java.util.*;
  */
 public class FlightPathGenerator {
     /**
+     * Creates an instance of the {@link LngLatHandler} class.
+     */
+    private final LngLatHandler                 lngLatHandler = new LngLatHandler();
+    /**
      * Stores the central area, which the drone cannot leave once it has entered.
      */
     private final NamedRegion                   centralArea;
@@ -28,7 +32,7 @@ public class FlightPathGenerator {
     /**
      * Stores the cache of flight paths.
      */
-    private final Map<String, FlightPathNode[]> cache = new HashMap<>();
+    private final Map<String, FlightPathNode[]> cache         = new HashMap<>();
 
     /**
      * Constructs a new {@link FlightPathGenerator} object.
@@ -61,22 +65,20 @@ public class FlightPathGenerator {
             fullPath.addAll(Arrays.asList(toRestaurant));
 
             // Hover at restaurant.
-            fullPath.add(new FlightPathNode(
-                    order.getOrderNo(),
-                    toAppleton[0].fromCoordinate(),
-                    999,
-                    toAppleton[0].toCoordinate()
+            fullPath.add(new FlightPathNode(order.getOrderNo(),
+                                            toAppleton[0].fromCoordinate(),
+                                            999,
+                                            toAppleton[0].toCoordinate()
             ));
 
             // Go from restaurant to Appleton.
             fullPath.addAll(Arrays.asList(toAppleton));
 
             // Hover at Appleton.
-            fullPath.add(new FlightPathNode(
-                    order.getOrderNo(),
-                    toRestaurant[0].fromCoordinate(),
-                    999,
-                    toRestaurant[0].toCoordinate()
+            fullPath.add(new FlightPathNode(order.getOrderNo(),
+                                            toRestaurant[0].fromCoordinate(),
+                                            999,
+                                            toRestaurant[0].toCoordinate()
             ));
         }
 
@@ -164,9 +166,8 @@ public class FlightPathGenerator {
         fScore.put(start, heuristic(start, goal));
 
         // The set of currently discovered nodes that are not evaluated yet.
-        Queue<LngLat> openSet = new PriorityQueue<>(Comparator.comparingDouble(d -> fScore.getOrDefault(
-                d,
-                Double.MAX_VALUE
+        Queue<LngLat> openSet = new PriorityQueue<>(Comparator.comparingDouble(d -> fScore.getOrDefault(d,
+                                                                                                        Double.MAX_VALUE
                                                                                                        )));
         openSet.add(start);
 
@@ -178,25 +179,24 @@ public class FlightPathGenerator {
 
             // Get the next node to evaluate, and if it is the goal, return the path to it.
             LngLat current = openSet.remove();
-            if (PizzaDronz.lngLatHandler.isCloseTo(current, goal)) return reconstructPath(cameFrom, current);
+            if (lngLatHandler.isCloseTo(current, goal)) return reconstructPath(cameFrom, current);
 
             // For each neighbour of the current node, check if it is in a no-fly zone, or if the line between the
             // current node and the neighbour crosses a no-fly zone, or if the neighbour leaves the central area
             // after entering it. If so, skip the neighbour. Otherwise, update the neighbour's g-score and f-score,
             // and add it to the open set.
-            boolean currentInCentralArea = PizzaDronz.lngLatHandler.isInCentralArea(current, centralArea);
+            boolean currentInCentralArea = lngLatHandler.isInCentralArea(current, centralArea);
             for (int i = 0; i < maxNeighbours; i++) {
                 double angle     = i * 360.0 / maxNeighbours;
-                LngLat neighbour = PizzaDronz.lngLatHandler.nextPosition(current, angle);
+                LngLat neighbour = lngLatHandler.nextPosition(current, angle);
 
                 // If the neighbour is not in a legal position, skip it.
                 boolean crossesNoFlyZone = Arrays
                         .stream(noFlyZones)
-                        .anyMatch(r -> PizzaDronz.lngLatHandler.lineCrossesRegion(current, neighbour, r));
-                boolean leavesCentralArea = currentInCentralArea && !PizzaDronz.lngLatHandler.isInCentralArea(
-                        neighbour,
-                        centralArea
-                                                                                                             );
+                        .anyMatch(r -> lngLatHandler.lineCrossesRegion(current, neighbour, r));
+                boolean leavesCentralArea = currentInCentralArea && !lngLatHandler.isInCentralArea(neighbour,
+                                                                                                   centralArea
+                                                                                                  );
                 if (crossesNoFlyZone || leavesCentralArea) continue;
 
                 // Update the neighbour's g-score and f-score, and add it to the open set.
@@ -223,7 +223,7 @@ public class FlightPathGenerator {
      * @return the heuristic value for the given node
      */
     private double heuristic(LngLat node, LngLat goal) {
-        return PizzaDronz.lngLatHandler.distanceTo(node, goal);
+        return lngLatHandler.distanceTo(node, goal);
     }
 
     /**

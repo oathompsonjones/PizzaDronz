@@ -22,31 +22,23 @@ public class PizzaDronz {
     /**
      * Stores the start time of the application.
      */
-    public static final long                startTime      = System.nanoTime();
+    public static final long             startTime      = System.nanoTime();
     /**
      * Creates an instance of the {@link OrderValidator} class.
      */
-    public static final OrderValidator      orderValidator = new OrderValidator();
-    /**
-     * Creates an instance of the {@link LngLatHandler} class.
-     */
-    public static final LngLatHandler       lngLatHandler  = new LngLatHandler();
-    /**
-     * Stores the instance of the {@link FlightPathGenerator} class.
-     */
-    public final        FlightPathGenerator flightPathGenerator;
+    private final       OrderValidator   orderValidator = new OrderValidator();
     /**
      * Stores the instance of the {@link RESTManager} class.
      */
-    private final       RESTManager         restManager;
+    private final       RESTManager      restManager;
     /**
      * Stores the flight paths.
      */
-    private             FlightPathNode[]    flightPath     = null;
+    private             FlightPathNode[] flightPath     = null;
     /**
      * Stores the orders.
      */
-    private             Order[]             orders         = null;
+    private             Order[]          orders         = null;
 
     /**
      * Creates an instance of the {@link PizzaDronz} class.
@@ -54,12 +46,12 @@ public class PizzaDronz {
      * @param apiUrl The URL of the API.
      * @param date   The date to generate the flight paths for.
      */
-    public PizzaDronz(String apiUrl, LocalDate date) {
+    private PizzaDronz(String apiUrl, LocalDate date) {
         // Set up the RESTManager and the FlightPathGenerator.
         restManager = new RESTManager(apiUrl);
-        flightPathGenerator = new FlightPathGenerator(restManager.getCentralArea(),
-                                                      restManager.getNoFlyZones(),
-                                                      restManager.getRestaurants()
+        FlightPathGenerator flightPathGenerator = new FlightPathGenerator(restManager.getCentralArea(),
+                                                                          restManager.getNoFlyZones(),
+                                                                          restManager.getRestaurants()
         );
         System.out.println("Setup after " + ((System.nanoTime() - startTime) / 1_000_000_000.0) + "s");
 

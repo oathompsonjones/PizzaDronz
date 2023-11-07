@@ -17,11 +17,11 @@ public class RESTManager {
     /**
      * The object mapper used to parse between JSON and Java Objects.
      */
-    public final ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
+    private final ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
     /**
      * The base URL of the server.
      */
-    private      String       baseUrl;
+    private       String       baseUrl;
 
     /**
      * Creates a new RESTManager object.
@@ -59,30 +59,12 @@ public class RESTManager {
     }
 
     /**
-     * Makes a request to the `isAlive` endpoint to check if the server is alive.
-     *
-     * @return True if the server is alive, false otherwise.
-     */
-    public boolean isAlive() {
-        return (boolean) GET(Endpoints.IS_ALIVE);
-    }
-
-    /**
      * Makes a request to the `restaurants` endpoint to get the list of restaurants.
      *
      * @return The list of restaurants.
      */
     public Restaurant[] getRestaurants() {
         return (Restaurant[]) GET(Endpoints.RESTAURANTS);
-    }
-
-    /**
-     * Makes a request to the `orders` endpoint to get the list of orders.
-     *
-     * @return The list of orders.
-     */
-    public Order[] getOrders() {
-        return (Order[]) GET(Endpoints.ORDERS);
     }
 
     /**

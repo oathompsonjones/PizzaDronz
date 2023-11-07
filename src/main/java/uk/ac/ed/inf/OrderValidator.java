@@ -113,7 +113,7 @@ public class OrderValidator implements OrderValidation {
             var splitDate = creditCardExpiry.split("/");
             expiryMonth = Integer.parseInt(splitDate[0]);
             expiryYear = Integer.parseInt(splitDate[1]);
-        } catch (Exception e) {
+        } catch (Exception err) {
             return false;
         }
 

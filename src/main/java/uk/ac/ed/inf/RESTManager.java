@@ -53,8 +53,8 @@ public class RESTManager {
     private Object GET(Endpoints endpoint, String args) {
         try {
             return objectMapper.readValue(new URL(baseUrl + endpoint.getUrl() + args), endpoint.getClazz());
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        } catch (IOException err) {
+            throw new RuntimeException(err);
         }
     }
 

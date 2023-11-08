@@ -16,7 +16,7 @@ public record FlightPathNode(
         LngLat fromCoordinate,
         double angle,
         LngLat toCoordinate,
-        int ticksSinceStartOfCalculation
+        long ticksSinceStartOfCalculation
 ) {
     /**
      * Creates an instance of the {@link FlightPathNode} class.
@@ -25,13 +25,7 @@ public record FlightPathNode(
      * @param node    The {@link FlightPathNode} to copy.
      */
     public FlightPathNode(String orderNo, FlightPathNode node) {
-        this(
-                orderNo,
-                node.fromCoordinate,
-                node.angle,
-                node.toCoordinate,
-                (int) (System.nanoTime() - PizzaDronz.startTime)
-            );
+        this(orderNo, node.fromCoordinate, node.angle, node.toCoordinate, PizzaDronz.ticksSinceStart());
     }
 
     /**
@@ -41,13 +35,7 @@ public record FlightPathNode(
      * @param node  The {@link FlightPathNode} to copy.
      */
     public FlightPathNode(double angle, FlightPathNode node) {
-        this(
-                node.orderNo,
-                node.fromCoordinate,
-                angle,
-                node.toCoordinate,
-                (int) (System.nanoTime() - PizzaDronz.startTime)
-            );
+        this(node.orderNo, node.fromCoordinate, angle, node.toCoordinate, PizzaDronz.ticksSinceStart());
     }
 
     /**
@@ -58,7 +46,7 @@ public record FlightPathNode(
      * @param toCoordinate   The ending coordinate.
      */
     public FlightPathNode(LngLat fromCoordinate, double angle, LngLat toCoordinate) {
-        this(null, fromCoordinate, angle, toCoordinate, (int) (System.nanoTime() - PizzaDronz.startTime));
+        this(null, fromCoordinate, angle, toCoordinate, PizzaDronz.ticksSinceStart());
     }
 
     /**
@@ -70,6 +58,6 @@ public record FlightPathNode(
      * @param toCoordinate   The ending coordinate.
      */
     public FlightPathNode(String orderNo, LngLat fromCoordinate, double angle, LngLat toCoordinate) {
-        this(orderNo, fromCoordinate, angle, toCoordinate, (int) (System.nanoTime() - PizzaDronz.startTime));
+        this(orderNo, fromCoordinate, angle, toCoordinate, PizzaDronz.ticksSinceStart());
     }
 }

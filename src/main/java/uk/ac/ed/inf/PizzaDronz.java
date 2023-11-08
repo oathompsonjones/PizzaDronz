@@ -21,23 +21,23 @@ public class PizzaDronz {
     /**
      * Stores the start time of the application.
      */
-    public static final long             startTime      = System.nanoTime();
+    private static final long             startTime      = System.nanoTime();
     /**
      * Creates an instance of the {@link OrderValidator} class.
      */
-    private final       OrderValidator   orderValidator = new OrderValidator();
+    private final        OrderValidator   orderValidator = new OrderValidator();
     /**
      * Stores the instance of the {@link RESTManager} class.
      */
-    private final       RESTManager      restManager;
+    private final        RESTManager      restManager;
     /**
      * Stores the flight paths.
      */
-    private             FlightPathNode[] flightPath     = null;
+    private              FlightPathNode[] flightPath     = null;
     /**
      * Stores the orders.
      */
-    private             Order[]          orders         = null;
+    private              Order[]          orders         = null;
 
     /**
      * Creates an instance of the {@link PizzaDronz} class.
@@ -52,22 +52,25 @@ public class PizzaDronz {
                                                           restManager.getNoFlyZones(),
                                                           restManager.getRestaurants()
         );
-        System.out.println("Setup after " + (System.nanoTime() - startTime) + "ns");
+        System.out.println("Setup after " + ticksSinceStart() + "ns");
 
         // Fetch and validate the orders.
         var validOrders = fetchValidOrders(date);
-        System.out.println(
-                "Fetched " + validOrders.length + " valid orders after " + (System.nanoTime() - startTime) + "ns");
+        System.out.println("Fetched " + validOrders.length + " valid orders after " + ticksSinceStart() + "ns");
 
         // Generate the flight path.
         flightPath = flightPathGenerator.generateFullPath(validOrders);
-        System.out.println("Generated flight path after " + (System.nanoTime() - startTime) + "ns");
+        System.out.println("Generated flight path after " + ticksSinceStart() + "ns");
 
         // Generate the JSON files.
         generateFlightPathJSON(date);
         generateFlightPathGeoJSON(date);
         generateDeliveryJSON(date);
-        System.out.println("Finished after " + (System.nanoTime() - startTime) + "ns");
+        System.out.println("Finished after " + ticksSinceStart() + "ns");
+    }
+
+    public static long ticksSinceStart() {
+        return System.nanoTime() - startTime;
     }
 
     /**

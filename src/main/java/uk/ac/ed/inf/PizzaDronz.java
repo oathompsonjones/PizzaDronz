@@ -23,25 +23,21 @@ import java.util.Arrays;
  */
 public class PizzaDronz {
     /**
-     * Stores the start time of the application.
-     */
-    private static final long             startTime      = System.nanoTime();
-    /**
      * Creates an instance of the {@link OrderValidator} class.
      */
-    private final        OrderValidator   orderValidator = new OrderValidator();
+    private final OrderValidator orderValidator = new OrderValidator();
     /**
      * Stores the instance of the {@link RESTManager} class.
      */
-    private final        RESTManager      restManager;
+    private final RESTManager restManager;
     /**
      * Stores the flight paths.
      */
-    private              FlightPathNode[] flightPath     = null;
+    private       FlightPathNode[] flightPath   = null;
     /**
      * Stores the orders.
      */
-    private              Order[]          orders         = null;
+    private       Order[] orders                = null;
 
     /**
      * Creates an instance of the {@link PizzaDronz} class.
@@ -83,18 +79,10 @@ public class PizzaDronz {
             System.exit(1);
         }
 
+        long startTime = System.currentTimeMillis();
         System.out.println("Starting PizzaDronz.");
         new PizzaDronz(args[1], LocalDate.parse(args[0]));
-        System.out.println("Exiting PizzaDronz. Calculations took " + (ticksSinceStart() / 1e9) + "s.");
-    }
-
-    /**
-     * Gets the number of nanoseconds since the application started.
-     *
-     * @return The number of nanoseconds since the application started.
-     */
-    public static long ticksSinceStart() {
-        return System.nanoTime() - startTime;
+        System.out.println("Exiting PizzaDronz. Calculations took " + (System.currentTimeMillis() - startTime) + "ms.");
     }
 
     /**

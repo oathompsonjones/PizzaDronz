@@ -44,7 +44,6 @@ public class FlightPathNodeJSONSerializer extends StdSerializer<FlightPathNode> 
         json.writeNumberField("angle", node.angle());
         json.writeNumberField("toLongitude", node.toCoordinate().lng());
         json.writeNumberField("toLatitude", node.toCoordinate().lat());
-        json.writeNumberField("ticksSinceStartOfCalculation", node.ticksSinceStartOfCalculation());
         json.writeEndObject();
     }
 }

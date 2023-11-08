@@ -8,15 +8,15 @@ public interface Endpoints {
     /**
      * The endpoint to get the list of restaurants.
      */
-    Endpoint<Restaurant[]> RESTAURANTS = new Endpoint<>("restaurants", Restaurant[].class);
+    Endpoint<Restaurant[]>  RESTAURANTS  = new Endpoint<>("restaurants", Restaurant[].class);
     /**
      * The endpoint to get the list of orders.
      */
-    Endpoint<Order[]>      ORDERS      = new Endpoint<>("orders", Order[].class);
+    Endpoint<Order[]>       ORDERS       = new Endpoint<>("orders", Order[].class);
     /**
      * The endpoint to get the central area.
      */
-    Endpoint<NamedRegion> CENTRAL_AREA = new Endpoint<>("centralArea", NamedRegion.class);
+    Endpoint<NamedRegion>   CENTRAL_AREA = new Endpoint<>("centralArea", NamedRegion.class);
     /**
      * The endpoint to get the list of no-fly zones.
      */

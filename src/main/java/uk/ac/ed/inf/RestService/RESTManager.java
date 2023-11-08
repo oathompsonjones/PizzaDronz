@@ -46,6 +46,7 @@ public class RESTManager {
      * Makes a request to the `orders` endpoint to get the list of orders for a given date.
      *
      * @param date The date to get the orders for.
+     *
      * @return The list of orders for the given date.
      */
     public Order[] getOrders(LocalDate date) {
@@ -74,6 +75,7 @@ public class RESTManager {
      * Performs a GET request to the server.
      *
      * @param endpoint The endpoint to call.
+     *
      * @return The response from the server.
      */
     private <T> T GET(Endpoint<T> endpoint) {
@@ -85,6 +87,7 @@ public class RESTManager {
      *
      * @param endpoint The endpoint to call.
      * @param args     The arguments to pass to the endpoint.
+     *
      * @return The response from the server.
      */
     private <T> T GET(Endpoint<T> endpoint, String args) {

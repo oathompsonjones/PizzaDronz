@@ -71,7 +71,8 @@ public class PizzaDronz {
     /**
      * Entry point of the application.
      *
-     * @param args The command line arguments. The first argument is the date and the second argument is the path to the file containing the orders.
+     * @param args The command line arguments. The first argument is the date and the second argument is the path to the
+     *             file containing the orders.
      */
     public static void main(String[] args) {
         // Check if the correct number of arguments were provided.
@@ -90,6 +91,7 @@ public class PizzaDronz {
      * Fetches and validates all orders for the given date.
      *
      * @param date The date to fetch the orders for.
+     *
      * @return The valid orders.
      */
     private Order[] fetchValidOrders(LocalDate date) {

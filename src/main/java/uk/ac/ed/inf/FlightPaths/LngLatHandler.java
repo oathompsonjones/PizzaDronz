@@ -17,6 +17,7 @@ public class LngLatHandler implements LngLatHandling {
      *
      * @param start the position to calculate the distance from
      * @param end   the position to calculate the distance to
+     *
      * @return the distance between the two points
      */
     public double distanceTo(LngLat start, LngLat end) {
@@ -29,6 +30,7 @@ public class LngLatHandler implements LngLatHandling {
      *
      * @param start the position to check the distance from
      * @param other the position to check the distance to
+     *
      * @return true if the distance between the two points is less than the close distance, false otherwise
      */
     public boolean isCloseTo(LngLat start, LngLat other) {
@@ -41,6 +43,7 @@ public class LngLatHandler implements LngLatHandling {
      *
      * @param position the position to check
      * @param region   the region to check
+     *
      * @return true if the position is in the region, false otherwise
      */
     public boolean isInRegion(LngLat position, NamedRegion region) {
@@ -62,11 +65,26 @@ public class LngLatHandler implements LngLatHandling {
     }
 
     /**
+     * Calculates the next position of the drone
+     *
+     * @param startPosition the position to calculate the next position from
+     * @param angle         the angle to calculate the next position at
+     *
+     * @return the next position of the drone
+     */
+    public LngLat nextPosition(LngLat startPosition, double angle) {
+        double newLng = startPosition.lng() + Math.cos(Math.toRadians(angle)) * SystemConstants.DRONE_MOVE_DISTANCE;
+        double newLat = startPosition.lat() + Math.sin(Math.toRadians(angle)) * SystemConstants.DRONE_MOVE_DISTANCE;
+        return new LngLat(newLng, newLat);
+    }
+
+    /**
      * Checks if a line crosses a region
      *
      * @param pos1   the first point of the line
      * @param pos2   the second point of the line
      * @param region the region to check
+     *
      * @return true if the line crosses the region, false otherwise
      */
     public boolean lineCrossesRegion(LngLat pos1, LngLat pos2, NamedRegion region) {
@@ -79,18 +97,5 @@ public class LngLatHandler implements LngLatHandling {
             if (line1.intersectsLine(line2)) return true;
         }
         return false;
-    }
-
-    /**
-     * Calculates the next position of the drone
-     *
-     * @param startPosition the position to calculate the next position from
-     * @param angle         the angle to calculate the next position at
-     * @return the next position of the drone
-     */
-    public LngLat nextPosition(LngLat startPosition, double angle) {
-        double newLng = startPosition.lng() + Math.cos(Math.toRadians(angle)) * SystemConstants.DRONE_MOVE_DISTANCE;
-        double newLat = startPosition.lat() + Math.sin(Math.toRadians(angle)) * SystemConstants.DRONE_MOVE_DISTANCE;
-        return new LngLat(newLng, newLat);
     }
 }

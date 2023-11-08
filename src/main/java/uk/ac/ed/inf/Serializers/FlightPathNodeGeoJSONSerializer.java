@@ -33,6 +33,7 @@ public class FlightPathNodeGeoJSONSerializer extends StdSerializer<FlightPathNod
      * @param path       The array of {@link FlightPathNode} objects to serialize.
      * @param json       The {@link JsonGenerator} to use.
      * @param serializer The {@link SerializerProvider} to use.
+     *
      * @throws IOException If an I/O error occurs.
      */
     @Override

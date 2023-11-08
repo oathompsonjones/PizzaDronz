@@ -33,6 +33,7 @@ public class OrderJSONSerializer extends StdSerializer<Order> {
      * @param order      The {@link Order} object to serialize.
      * @param json       The {@link JsonGenerator} to use.
      * @param serializer The {@link SerializerProvider} to use.
+     *
      * @throws IOException If an I/O error occurs.
      */
     @Override

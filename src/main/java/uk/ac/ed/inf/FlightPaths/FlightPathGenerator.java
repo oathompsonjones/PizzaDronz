@@ -52,6 +52,7 @@ public class FlightPathGenerator {
      * Generates the full flight path for the given orders.
      *
      * @param orders the orders
+     *
      * @return the full flight path for the given orders
      */
     public FlightPathNode[] generateFullPath(Order[] orders) {
@@ -89,6 +90,7 @@ public class FlightPathGenerator {
      * Generates the flight path for the given order.
      *
      * @param order the order
+     *
      * @return the flight path for the given order
      */
     private FlightPathNode[] generate(Order order) {
@@ -116,6 +118,7 @@ public class FlightPathGenerator {
      *
      * @param order       The order to get the restaurant from.
      * @param restaurants The list of restaurants to search through.
+     *
      * @return The restaurant from the given order.
      */
     private Restaurant getOrderRestaurant(Order order, Restaurant[] restaurants) {
@@ -133,6 +136,7 @@ public class FlightPathGenerator {
      * Reverses the given path.
      *
      * @param path the path
+     *
      * @return the reversed path
      */
     private FlightPathNode[] reversePath(FlightPathNode[] path) {
@@ -152,6 +156,7 @@ public class FlightPathGenerator {
      * @param start         the start
      * @param goal          the goal
      * @param maxNeighbours the maximum number of neighbours to consider
+     *
      * @return the shortest path from the start to the goal
      */
     private FlightPathNode[] aStar(LngLat start, LngLat goal, int maxNeighbours) {
@@ -216,11 +221,12 @@ public class FlightPathGenerator {
     }
 
     /**
-     * Calculates the heuristic value for the given node.
-     * In this case, the heuristic value is the Euclidean distance between the node and the goal.
+     * Calculates the heuristic value for the given node. In this case, the heuristic value is the Euclidean distance
+     * between the node and the goal.
      *
      * @param node the node
      * @param goal the goal
+     *
      * @return the heuristic value for the given node
      */
     private double heuristic(LngLat node, LngLat goal) {
@@ -232,6 +238,7 @@ public class FlightPathGenerator {
      *
      * @param cameFrom the map of nodes to their previous nodes
      * @param current  the current node
+     *
      * @return the path from the start to the given node
      */
     private FlightPathNode[] reconstructPath(Map<LngLat, FlightPathNode> cameFrom, LngLat current) {

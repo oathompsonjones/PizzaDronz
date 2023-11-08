@@ -52,21 +52,19 @@ public class PizzaDronz {
                                                           restManager.getNoFlyZones(),
                                                           restManager.getRestaurants()
         );
-        System.out.println("Setup after " + ticksSinceStart() + "ns");
 
         // Fetch and validate the orders.
         var validOrders = fetchValidOrders(date);
-        System.out.println("Fetched " + validOrders.length + " valid orders after " + ticksSinceStart() + "ns");
+        System.out.println("Fetched " + orders.length + " orders. " + validOrders.length + " are valid.");
 
         // Generate the flight path.
         flightPath = flightPathGenerator.generateFullPath(validOrders);
-        System.out.println("Generated flight path after " + ticksSinceStart() + "ns");
+        System.out.println("Generated flight path.");
 
         // Generate the JSON files.
         generateFlightPathJSON(date);
         generateFlightPathGeoJSON(date);
         generateDeliveryJSON(date);
-        System.out.println("Finished after " + ticksSinceStart() + "ns");
     }
 
     /**
@@ -75,7 +73,15 @@ public class PizzaDronz {
      * @param args The command line arguments. The first argument is the date and the second argument is the path to the file containing the orders.
      */
     public static void main(String[] args) {
+        // Check if the correct number of arguments were provided.
+        if (args.length != 2) {
+            System.err.println("Usage: PizzaDronz <date> <rest-url>");
+            System.exit(1);
+        }
+
+        System.out.println("Starting PizzaDronz.");
         new PizzaDronz(args[1], LocalDate.parse(args[0]));
+        System.out.println("Exiting PizzaDronz. Calculations took " + ticksSinceStart() + "ns.");
     }
 
     /**
@@ -155,7 +161,7 @@ public class PizzaDronz {
                     .enable(SerializationFeature.INDENT_OUTPUT)
                     .registerModule(module)
                     .writeValue(file, content);
-            System.out.println("Wrote data to " + fileName + " after " + (System.nanoTime() - startTime) + "ns");
+            System.out.println("Wrote data to resultfiles/" + fileName + ".");
         } catch (Exception err) {
             System.err.println(err.getMessage());
         }

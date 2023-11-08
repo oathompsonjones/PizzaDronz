@@ -81,7 +81,7 @@ public class PizzaDronz {
 
         System.out.println("Starting PizzaDronz.");
         new PizzaDronz(args[1], LocalDate.parse(args[0]));
-        System.out.println("Exiting PizzaDronz. Calculations took " + ticksSinceStart() + "ns.");
+        System.out.println("Exiting PizzaDronz. Calculations took " + (ticksSinceStart() / 1e9) + "s.");
     }
 
     /**

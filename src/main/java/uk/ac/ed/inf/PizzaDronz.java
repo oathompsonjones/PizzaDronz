@@ -69,6 +69,11 @@ public class PizzaDronz {
         System.out.println("Finished after " + ticksSinceStart() + "ns");
     }
 
+    /**
+     * Gets the number of nanoseconds since the application started.
+     *
+     * @return The number of nanoseconds since the application started.
+     */
     public static long ticksSinceStart() {
         return System.nanoTime() - startTime;
     }

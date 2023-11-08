@@ -78,7 +78,7 @@ public class PizzaDronz {
         // Check if the correct number of arguments were provided.
         if (args.length != 2) {
             System.err.println("Usage: PizzaDronz <date> <rest-url>");
-            System.exit(1);
+            return;
         }
 
         long startTime = System.currentTimeMillis();

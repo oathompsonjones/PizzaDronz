@@ -191,7 +191,7 @@ public class FlightPathGenerator {
             // current node and the neighbour crosses a no-fly zone, or if the neighbour leaves the central area
             // after entering it. If so, skip the neighbour. Otherwise, update the neighbour's g-score and f-score,
             // and add it to the open set.
-            boolean currentInCentralArea = lngLatHandler.isInCentralArea(current, centralArea);
+            boolean inCentralArea = lngLatHandler.isInCentralArea(current, centralArea);
             for (int i = 0; i < maxNeighbours; i++) {
                 double angle     = i * 360.0 / maxNeighbours;
                 var    neighbour = lngLatHandler.nextPosition(current, angle);
@@ -200,9 +200,7 @@ public class FlightPathGenerator {
                 boolean crossesNoFlyZone = Arrays
                         .stream(noFlyZones)
                         .anyMatch(region -> lngLatHandler.lineCrossesRegion(current, neighbour, region));
-                boolean leavesCentralArea = currentInCentralArea && !lngLatHandler.isInCentralArea(neighbour,
-                                                                                                   centralArea
-                                                                                                  );
+                boolean leavesCentralArea = inCentralArea && !lngLatHandler.isInCentralArea(neighbour, centralArea);
                 if (crossesNoFlyZone || leavesCentralArea) continue;
 
                 // Update the neighbour's g-score and f-score, and add it to the open set.

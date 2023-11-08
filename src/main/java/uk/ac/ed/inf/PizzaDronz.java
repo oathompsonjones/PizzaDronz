@@ -70,21 +70,21 @@ public class PizzaDronz {
     }
 
     /**
-     * Gets the number of nanoseconds since the application started.
-     *
-     * @return The number of nanoseconds since the application started.
-     */
-    public static long ticksSinceStart() {
-        return System.nanoTime() - startTime;
-    }
-
-    /**
      * Entry point of the application.
      *
      * @param args The command line arguments. The first argument is the date and the second argument is the path to the file containing the orders.
      */
     public static void main(String[] args) {
         new PizzaDronz(args[1], LocalDate.parse(args[0]));
+    }
+
+    /**
+     * Gets the number of nanoseconds since the application started.
+     *
+     * @return The number of nanoseconds since the application started.
+     */
+    public static long ticksSinceStart() {
+        return System.nanoTime() - startTime;
     }
 
     /**

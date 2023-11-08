@@ -13,6 +13,7 @@ import uk.ac.ed.inf.Serializers.FlightPathNodeJSONSerializer;
 import uk.ac.ed.inf.Serializers.OrderJSONSerializer;
 import uk.ac.ed.inf.ilp.constant.OrderStatus;
 import uk.ac.ed.inf.ilp.data.Order;
+import uk.ac.ed.inf.ilp.data.Restaurant;
 
 import java.io.File;
 import java.time.LocalDate;
@@ -54,7 +55,7 @@ public class PizzaDronz {
         );
 
         // Fetch and validate the orders.
-        var validOrders = fetchValidOrders(date);
+        Order[] validOrders = fetchValidOrders(date);
         System.out.println("Fetched " + orders.length + " orders. " + validOrders.length + " are valid.");
 
         // Generate the flight path.
@@ -92,7 +93,7 @@ public class PizzaDronz {
      * @return The valid orders.
      */
     private Order[] fetchValidOrders(LocalDate date) {
-        var restaurants = restManager.getRestaurants();
+        Restaurant[] restaurants = restManager.getRestaurants();
         orders = restManager.getOrders(date);
         // Each order in this.orders will be validated as a side effect, before filtering out any invalid orders.
         return Arrays

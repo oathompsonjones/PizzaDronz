@@ -45,14 +45,14 @@ public class LngLatHandler implements LngLatHandling {
      */
     public boolean isInRegion(LngLat position, NamedRegion region) {
         // Creates a polygon from the region's vertices
-        var vertices = region.vertices();
-        var path     = new Path2D.Double();
+        LngLat[] vertices = region.vertices();
+        var      path     = new Path2D.Double();
         path.moveTo(vertices[0].lng(), vertices[0].lat());
         for (int i = 1; i < vertices.length; i++) {
             path.lineTo(vertices[i].lng(), vertices[i].lat());
             // Determines if position lies on the edge of polygon, as path.contains does not include all edges
-            var vertex1 = vertices[i];
-            var vertex2 = vertices[(i + 1) % vertices.length];
+            LngLat vertex1 = vertices[i];
+            LngLat vertex2 = vertices[(i + 1) % vertices.length];
             if (distanceTo(position, vertex1) + distanceTo(position, vertex2) == distanceTo(vertex1, vertex2))
                 return true;
         }
@@ -70,12 +70,12 @@ public class LngLatHandler implements LngLatHandling {
      * @return true if the line crosses the region, false otherwise
      */
     public boolean lineCrossesRegion(LngLat pos1, LngLat pos2, NamedRegion region) {
-        var vertices = region.vertices();
+        LngLat[] vertices = region.vertices();
         for (int i = 0; i < vertices.length; i++) {
-            var vertex1 = vertices[i];
-            var vertex2 = vertices[(i + 1) % vertices.length];
-            var line1   = new Line2D.Double(pos1.lng(), pos1.lat(), pos2.lng(), pos2.lat());
-            var line2   = new Line2D.Double(vertex1.lng(), vertex1.lat(), vertex2.lng(), vertex2.lat());
+            LngLat vertex1 = vertices[i];
+            LngLat vertex2 = vertices[(i + 1) % vertices.length];
+            var    line1   = new Line2D.Double(pos1.lng(), pos1.lat(), pos2.lng(), pos2.lat());
+            var    line2   = new Line2D.Double(vertex1.lng(), vertex1.lat(), vertex2.lng(), vertex2.lat());
             if (line1.intersectsLine(line2)) return true;
         }
         return false;

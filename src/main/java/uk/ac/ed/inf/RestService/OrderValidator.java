@@ -29,12 +29,12 @@ public class OrderValidator implements OrderValidation {
             return setValidationCodeAndStatus(order, OrderValidationCode.MAX_PIZZA_COUNT_EXCEEDED);
 
         // Check that all the pizzas exist
-        var pizzaRestaurants = pizzasAllExist(order.getPizzasInOrder(), definedRestaurants);
+        Restaurant[] pizzaRestaurants = pizzasAllExist(order.getPizzasInOrder(), definedRestaurants);
         if (Arrays.stream(pizzaRestaurants).anyMatch(Objects::isNull))
             return setValidationCodeAndStatus(order, OrderValidationCode.PIZZA_NOT_DEFINED);
 
         // Check that all the pizzas are from the same restaurant
-        var restaurant = pizzaAreFromSameRestaurant(pizzaRestaurants);
+        Restaurant restaurant = pizzaAreFromSameRestaurant(pizzaRestaurants);
         if (restaurant == null)
             return setValidationCodeAndStatus(order, OrderValidationCode.PIZZA_FROM_MULTIPLE_RESTAURANTS);
 
@@ -110,7 +110,7 @@ public class OrderValidator implements OrderValidation {
         int expiryMonth;
         int expiryYear;
         try {
-            var splitDate = creditCardExpiry.split("/");
+            String[] splitDate = creditCardExpiry.split("/");
             expiryMonth = Integer.parseInt(splitDate[0]);
             expiryYear = Integer.parseInt(splitDate[1]);
         } catch (Exception err) {
@@ -148,9 +148,9 @@ public class OrderValidator implements OrderValidation {
     private boolean totalIsCorrect(int totalOnOrder, Pizza[] pizzas, Pizza[] menu) {
         // Check that the price of each pizza sums to the total price of the order.
         int total = SystemConstants.ORDER_CHARGE_IN_PENCE;
-        for (var pizza : pizzas) {
+        for (Pizza pizza : pizzas) {
             // Find the pizza on the menu
-            var menuPizza = Arrays.stream(menu).filter(p -> p.name().equals(pizza.name())).toArray(Pizza[]::new)[0];
+            Pizza menuPizza = Arrays.stream(menu).filter(p -> p.name().equals(pizza.name())).toArray(Pizza[]::new)[0];
             // Add the price of the pizza to the total
             total += menuPizza.priceInPence();
         }
@@ -182,10 +182,10 @@ public class OrderValidator implements OrderValidation {
         // For each pizza...
         for (int i = 0; i < pizzas.length; i++) {
             // Check each restaurant...
-            for (var restaurant : restaurants) {
+            for (Restaurant restaurant : restaurants) {
                 // Check the names of each pizza on the restaurant's menu...
-                var pizzaNames = Arrays.stream(restaurant.menu()).map(Pizza::name).toArray(String[]::new);
-                for (var pizzaName : pizzaNames) {
+                String[] pizzaNames = Arrays.stream(restaurant.menu()).map(Pizza::name).toArray(String[]::new);
+                for (String pizzaName : pizzaNames) {
                     // If the pizza is found, set the restaurant value in the array
                     if (pizzaName.equals(pizzas[i].name())) {
                         pizzaRestaurants[i] = restaurant;

@@ -1,10 +1,7 @@
 package uk.ac.ed.inf.FlightPaths;
 
 import uk.ac.ed.inf.ilp.constant.OrderStatus;
-import uk.ac.ed.inf.ilp.data.LngLat;
-import uk.ac.ed.inf.ilp.data.NamedRegion;
-import uk.ac.ed.inf.ilp.data.Order;
-import uk.ac.ed.inf.ilp.data.Restaurant;
+import uk.ac.ed.inf.ilp.data.*;
 
 import java.util.*;
 
@@ -61,8 +58,8 @@ public class FlightPathGenerator {
         var fullPath = new LinkedList<FlightPathNode>();
 
         for (Order order : orders) {
-            var toAppleton   = generate(order);
-            var toRestaurant = reversePath(toAppleton);
+            FlightPathNode[] toAppleton   = generate(order);
+            FlightPathNode[] toRestaurant = reversePath(toAppleton);
 
             // Go from Appleton to restaurant.
             fullPath.addAll(Arrays.asList(toRestaurant));
@@ -95,15 +92,15 @@ public class FlightPathGenerator {
      * @return the flight path for the given order
      */
     private FlightPathNode[] generate(Order order) {
-        var restaurant = getOrderRestaurant(order, restaurants);
+        Restaurant restaurant = getOrderRestaurant(order, restaurants);
         assert restaurant != null;
 
         // Set the start position to the restaurant, and the goal position to Appleton Tower.
-        var start = restaurant.location();
-        var goal  = new LngLat(-3.186874, 55.944494);
+        LngLat start = restaurant.location();
+        var    goal  = new LngLat(-3.186874, 55.944494);
 
         // Fetch the flight from the cache, or compute it if it is not in the cache.
-        var path = cache.computeIfAbsent(restaurant.name(), __ -> aStar(start, goal, 16));
+        FlightPathNode[] path = cache.computeIfAbsent(restaurant.name(), __ -> aStar(start, goal, 16));
         // Build the path out of new FlightPathNodes, and set the order number.
         path = Arrays
                 .stream(path)
@@ -124,8 +121,8 @@ public class FlightPathGenerator {
     private Restaurant getOrderRestaurant(Order order, Restaurant[] restaurants) {
         // As this method is only called on valid orders, it is safe to just find the first restaurant that sells the
         // first pizza in the order.
-        for (var restaurant : restaurants) {
-            for (var pizza : restaurant.menu()) {
+        for (Restaurant restaurant : restaurants) {
+            for (Pizza pizza : restaurant.menu()) {
                 if (pizza.name().equals(order.getPizzasInOrder()[0].name())) return restaurant;
             }
         }
@@ -141,7 +138,7 @@ public class FlightPathGenerator {
     private FlightPathNode[] reversePath(FlightPathNode[] path) {
         var reversedPath = new FlightPathNode[path.length];
         for (int i = 0; i < reversedPath.length; i++) {
-            var node = path[path.length - i - 1];
+            FlightPathNode node = path[path.length - i - 1];
             // Create a new instance of FlightPathNode, but with the angle reversed.
             reversedPath[i] = new FlightPathNode((node.angle() + 180) % 360, node);
         }
@@ -184,7 +181,7 @@ public class FlightPathGenerator {
                 return maxNeighbours > 4 ? aStar(start, goal, maxNeighbours / 2) : new FlightPathNode[0];
 
             // Get the next node to evaluate, and if it is the goal, return the path to it.
-            var current = openSet.remove();
+            LngLat current = openSet.remove();
             if (lngLatHandler.isCloseTo(current, goal)) return reconstructPath(cameFrom, current);
 
             // For each neighbour of the current node, check if it is in a no-fly zone, or if the line between the
@@ -194,7 +191,7 @@ public class FlightPathGenerator {
             boolean inCentralArea = lngLatHandler.isInCentralArea(current, centralArea);
             for (int i = 0; i < maxNeighbours; i++) {
                 double angle     = i * 360.0 / maxNeighbours;
-                var    neighbour = lngLatHandler.nextPosition(current, angle);
+                LngLat neighbour = lngLatHandler.nextPosition(current, angle);
 
                 // If the neighbour is not in a legal position, skip it.
                 boolean crossesNoFlyZone = Arrays
@@ -241,7 +238,7 @@ public class FlightPathGenerator {
         var totalPath = new LinkedList<FlightPathNode>();
         // Follow the path backwards, and add each node to the total path.
         while (current != null) {
-            var cameFromCurrent = cameFrom.get(current);
+            FlightPathNode cameFromCurrent = cameFrom.get(current);
             if (cameFromCurrent != null) {
                 totalPath.add(0, cameFromCurrent);
                 current = cameFromCurrent.fromCoordinate();

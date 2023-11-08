@@ -1,4 +1,4 @@
-package uk.ac.ed.inf;
+package uk.ac.ed.inf.RestService;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -94,36 +94,4 @@ public class RESTManager {
     public NamedRegion[] getNoFlyZones() {
         return GET(Endpoints.NO_FLY_ZONES);
     }
-
-    /**
-     * An interface to represent the endpoints of the server.
-     */
-    private interface Endpoints {
-        /**
-         * The endpoint to get the list of restaurants.
-         */
-        Endpoint<Restaurant[]>  RESTAURANTS  = new Endpoint<>("restaurants", Restaurant[].class);
-        /**
-         * The endpoint to get the list of orders.
-         */
-        Endpoint<Order[]>       ORDERS       = new Endpoint<>("orders", Order[].class);
-        /**
-         * The endpoint to get the central area.
-         */
-        Endpoint<NamedRegion>   CENTRAL_AREA = new Endpoint<>("centralArea", NamedRegion.class);
-        /**
-         * The endpoint to get the list of no-fly zones.
-         */
-        Endpoint<NamedRegion[]> NO_FLY_ZONES = new Endpoint<>("noFlyZones", NamedRegion[].class);
-    }
-
-    /**
-     * A record to represent an endpoint.
-     *
-     * @param <T> The type of the response from the endpoint.
-     */
-    private record Endpoint<T>(
-            String url,
-            Class<T> clazz
-    ) {}
 }

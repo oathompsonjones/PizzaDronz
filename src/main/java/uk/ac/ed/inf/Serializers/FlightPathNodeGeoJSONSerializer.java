@@ -3,7 +3,7 @@ package uk.ac.ed.inf.Serializers;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.ser.std.StdSerializer;
-import uk.ac.ed.inf.FlightPathNode;
+import uk.ac.ed.inf.FlightPaths.FlightPathNode;
 
 import java.io.IOException;
 

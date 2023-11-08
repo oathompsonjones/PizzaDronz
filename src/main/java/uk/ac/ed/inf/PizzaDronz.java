@@ -77,7 +77,7 @@ public class PizzaDronz {
     public static void main(String[] args) {
         // Check if the correct number of arguments were provided.
         if (args.length != 2) {
-            System.err.println("Usage: PizzaDronz <date> <rest-url>");
+            System.err.println("Please provide arguments in the following format: <date> <rest-url>");
             return;
         }
 

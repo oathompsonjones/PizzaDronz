@@ -12,27 +12,27 @@ public class FlightPathGenerator {
     /**
      * Creates an instance of the {@link LngLatHandler} class.
      */
-    private final LngLatHandler                 lngLatHandler = new LngLatHandler();
+    private final LngLatHandler                     lngLatHandler = new LngLatHandler();
     /**
      * Stores the cache of flight paths.
      */
-    private final Map<String, FlightPathNode[]> cache         = new HashMap<>();
+    private final Map<String, List<FlightPathNode>> cache         = new HashMap<>();
     /**
      * Stores the central area, which the drone cannot leave once it has entered.
      */
-    private final NamedRegion                   centralArea;
+    private final NamedRegion                       centralArea;
     /**
      * Stores the no-fly zones, which the drone cannot enter.
      */
-    private final NamedRegion[]                 noFlyZones;
+    private final NamedRegion[]                     noFlyZones;
     /**
      * Stores all the restaurants.
      */
-    private final Restaurant[]                  restaurants;
+    private final Restaurant[]                      restaurants;
     /**
      * Stores the time limit for the A* algorithm.
      */
-    private final int                           timeLimit;
+    private final int                               timeLimit;
 
     /**
      * Constructs a new {@link FlightPathGenerator} object.
@@ -59,27 +59,27 @@ public class FlightPathGenerator {
         var fullPath = new LinkedList<FlightPathNode>();
 
         for (Order order : orders) {
-            FlightPathNode[] toAppleton   = generate(order);
-            FlightPathNode[] toRestaurant = reversePath(toAppleton);
+            List<FlightPathNode> toAppleton   = generate(order);
+            List<FlightPathNode> toRestaurant = reversePath(toAppleton);
 
             // Go from Appleton to restaurant.
-            fullPath.addAll(Arrays.asList(toRestaurant));
+            fullPath.addAll(toRestaurant);
 
             // Hover at restaurant.
             fullPath.add(new FlightPathNode(order.getOrderNo(),
-                                            toAppleton[0].fromCoordinate(),
+                                            toAppleton.get(0).fromCoordinate(),
                                             999,
-                                            toAppleton[0].toCoordinate()
+                                            toAppleton.get(0).toCoordinate()
             ));
 
             // Go from restaurant to Appleton.
-            fullPath.addAll(Arrays.asList(toAppleton));
+            fullPath.addAll(toAppleton);
 
             // Hover at Appleton.
             fullPath.add(new FlightPathNode(order.getOrderNo(),
-                                            toRestaurant[0].fromCoordinate(),
+                                            toRestaurant.get(0).fromCoordinate(),
                                             999,
-                                            toRestaurant[0].toCoordinate()
+                                            toRestaurant.get(0).toCoordinate()
             ));
         }
 
@@ -93,7 +93,7 @@ public class FlightPathGenerator {
      *
      * @return the flight path for the given order
      */
-    private FlightPathNode[] generate(Order order) {
+    private List<FlightPathNode> generate(Order order) {
         Restaurant restaurant = getOrderRestaurant(order, restaurants);
         assert restaurant != null;
 
@@ -102,14 +102,11 @@ public class FlightPathGenerator {
         var    goal  = new LngLat(-3.186874, 55.944494);
 
         // Fetch the flight from the cache, or compute it if it is not in the cache.
-        FlightPathNode[] path = cache.computeIfAbsent(restaurant.name(), __ -> aStar(start, goal, 16));
+        List<FlightPathNode> path = cache.computeIfAbsent(restaurant.name(), __ -> aStar(start, goal, 16));
         // Build the path out of new FlightPathNodes, and set the order number.
-        path = Arrays
-                .stream(path)
-                .map(node -> new FlightPathNode(order.getOrderNo(), node))
-                .toArray(FlightPathNode[]::new);
+        path = path.stream().map(node -> new FlightPathNode(order.getOrderNo(), node)).toList();
 
-        order.setOrderStatus(path.length == 0 ? OrderStatus.VALID_BUT_NOT_DELIVERED : OrderStatus.DELIVERED);
+        order.setOrderStatus(path.isEmpty() ? OrderStatus.VALID_BUT_NOT_DELIVERED : OrderStatus.DELIVERED);
         return path;
     }
 
@@ -139,12 +136,12 @@ public class FlightPathGenerator {
      *
      * @return the reversed path
      */
-    private FlightPathNode[] reversePath(FlightPathNode[] path) {
-        var reversedPath = new FlightPathNode[path.length];
-        for (int i = 0; i < reversedPath.length; i++) {
-            FlightPathNode node = path[path.length - i - 1];
+    private List<FlightPathNode> reversePath(List<FlightPathNode> path) {
+        var reversedPath = new LinkedList<FlightPathNode>();
+        for (int i = path.size() - 1; i >= 0; i--) {
+            FlightPathNode node = path.get(i);
             // Create a new instance of FlightPathNode, but with the angle reversed.
-            reversedPath[i] = new FlightPathNode((node.angle() + 180) % 360, node);
+            reversedPath.add(new FlightPathNode((node.angle() + 180) % 360, node));
         }
         return reversedPath;
     }
@@ -159,7 +156,7 @@ public class FlightPathGenerator {
      *
      * @return the shortest path from the start to the goal
      */
-    private FlightPathNode[] aStar(LngLat start, LngLat goal, int maxNeighbours) {
+    private List<FlightPathNode> aStar(LngLat start, LngLat goal, int maxNeighbours) {
         long startTime = System.currentTimeMillis();
 
         // The set of nodes already evaluated.
@@ -183,7 +180,7 @@ public class FlightPathGenerator {
             // If the algorithm has been running for too long, try again with a smaller number of neighbours, until
             // the number of neighbours is 4, in which case return an empty list.
             if (System.currentTimeMillis() - startTime > timeLimit)
-                return maxNeighbours > 4 ? aStar(start, goal, maxNeighbours / 2) : new FlightPathNode[0];
+                return maxNeighbours > 4 ? aStar(start, goal, maxNeighbours / 2) : new LinkedList<>();
 
             // Get the next node to evaluate, and if it is the goal, return the path to it.
             LngLat current = openSet.remove();
@@ -217,7 +214,7 @@ public class FlightPathGenerator {
         }
 
         // If no path has been found yet, there is no path.
-        return new FlightPathNode[0];
+        return new LinkedList<>();
     }
 
     /**
@@ -241,7 +238,7 @@ public class FlightPathGenerator {
      *
      * @return the path from the start to the given node
      */
-    private FlightPathNode[] reconstructPath(Map<LngLat, FlightPathNode> cameFrom, LngLat current) {
+    private List<FlightPathNode> reconstructPath(Map<LngLat, FlightPathNode> cameFrom, LngLat current) {
         var totalPath = new LinkedList<FlightPathNode>();
         // Follow the path backwards, and add each node to the total path.
         while (current != null) {
@@ -251,6 +248,6 @@ public class FlightPathGenerator {
                 current = cameFromCurrent.fromCoordinate();
             } else current = null;
         }
-        return totalPath.toArray(FlightPathNode[]::new);
+        return totalPath;
     }
 }

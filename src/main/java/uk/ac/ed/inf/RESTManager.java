@@ -39,7 +39,7 @@ public class RESTManager {
      * @param endpoint The endpoint to call.
      * @return The response from the server.
      */
-    private Object GET(Endpoints endpoint) {
+    private <T> T GET(Endpoint<T> endpoint) {
         return GET(endpoint, "");
     }
 
@@ -50,9 +50,9 @@ public class RESTManager {
      * @param args     The arguments to pass to the endpoint.
      * @return The response from the server.
      */
-    private Object GET(Endpoints endpoint, String args) {
+    private <T> T GET(Endpoint<T> endpoint, String args) {
         try {
-            return objectMapper.readValue(new URL(baseUrl + endpoint.getUrl() + args), endpoint.getClazz());
+            return objectMapper.readValue(new URL(baseUrl + endpoint.url() + args), endpoint.clazz());
         } catch (IOException err) {
             throw new RuntimeException(err);
         }
@@ -64,7 +64,7 @@ public class RESTManager {
      * @return The list of restaurants.
      */
     public Restaurant[] getRestaurants() {
-        return (Restaurant[]) GET(Endpoints.RESTAURANTS);
+        return GET(Endpoints.RESTAURANTS);
     }
 
     /**
@@ -74,7 +74,7 @@ public class RESTManager {
      * @return The list of orders for the given date.
      */
     public Order[] getOrders(LocalDate date) {
-        return (Order[]) GET(Endpoints.ORDERS, "/" + date);
+        return GET(Endpoints.ORDERS, "/" + date);
     }
 
     /**
@@ -83,7 +83,7 @@ public class RESTManager {
      * @return The central area.
      */
     public NamedRegion getCentralArea() {
-        return (NamedRegion) GET(Endpoints.CENTRAL_AREA);
+        return GET(Endpoints.CENTRAL_AREA);
     }
 
     /**
@@ -92,66 +92,38 @@ public class RESTManager {
      * @return The list of no-fly zones.
      */
     public NamedRegion[] getNoFlyZones() {
-        return (NamedRegion[]) GET(Endpoints.NO_FLY_ZONES);
+        return GET(Endpoints.NO_FLY_ZONES);
     }
 
     /**
-     * An enum to represent the endpoints of the server.
+     * An interface to represent the endpoints of the server.
      */
-    private enum Endpoints {
+    private interface Endpoints {
         /**
          * The endpoint to get the list of restaurants.
          */
-        RESTAURANTS("restaurants", Restaurant[].class),
+        Endpoint<Restaurant[]>  RESTAURANTS  = new Endpoint<>("restaurants", Restaurant[].class);
         /**
          * The endpoint to get the list of orders.
          */
-        ORDERS("orders", Order[].class),
+        Endpoint<Order[]>       ORDERS       = new Endpoint<>("orders", Order[].class);
         /**
          * The endpoint to get the central area.
          */
-        CENTRAL_AREA("centralArea", NamedRegion.class),
+        Endpoint<NamedRegion>   CENTRAL_AREA = new Endpoint<>("centralArea", NamedRegion.class);
         /**
          * The endpoint to get the list of no-fly zones.
          */
-        NO_FLY_ZONES("noFlyZones", NamedRegion[].class);
-
-        /**
-         * The URL of the endpoint.
-         */
-        private final String   url;
-        /**
-         * The return type of the endpoint.
-         */
-        private final Class<?> clazz;
-
-        /**
-         * Creates a new Endpoints object.
-         *
-         * @param url   The URL of the endpoint.
-         * @param clazz The return type of the endpoint.
-         */
-        Endpoints(String url, Class<?> clazz) {
-            this.url = url;
-            this.clazz = clazz;
-        }
-
-        /**
-         * Gets the URL of the endpoint.
-         *
-         * @return The URL of the endpoint.
-         */
-        public String getUrl() {
-            return url;
-        }
-
-        /**
-         * Gets the return type of the endpoint.
-         *
-         * @return The return type of the endpoint.
-         */
-        public Class<?> getClazz() {
-            return clazz;
-        }
+        Endpoint<NamedRegion[]> NO_FLY_ZONES = new Endpoint<>("noFlyZones", NamedRegion[].class);
     }
+
+    /**
+     * A record to represent an endpoint.
+     *
+     * @param <T> The type of the response from the endpoint.
+     */
+    private record Endpoint<T>(
+            String url,
+            Class<T> clazz
+    ) {}
 }

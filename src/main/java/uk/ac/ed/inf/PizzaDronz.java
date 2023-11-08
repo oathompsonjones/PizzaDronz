@@ -24,21 +24,21 @@ import java.util.Arrays;
  */
 public class PizzaDronz {
     /**
-     * Creates an instance of the {@link OrderValidator} class.
-     */
-    private final OrderValidator orderValidator = new OrderValidator();
-    /**
      * Stores the instance of the {@link RESTManager} class.
      */
-    private final RESTManager restManager;
+    private final RESTManager      restManager;
+    /**
+     * Creates an instance of the {@link OrderValidator} class.
+     */
+    private final OrderValidator   orderValidator = new OrderValidator();
     /**
      * Stores the flight paths.
      */
-    private       FlightPathNode[] flightPath   = null;
+    private       FlightPathNode[] flightPath     = null;
     /**
      * Stores the orders.
      */
-    private       Order[] orders                = null;
+    private       Order[]          orders         = null;
 
     /**
      * Creates an instance of the {@link PizzaDronz} class.

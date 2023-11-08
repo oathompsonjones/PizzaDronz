@@ -14,6 +14,10 @@ public class FlightPathGenerator {
      */
     private final LngLatHandler                 lngLatHandler = new LngLatHandler();
     /**
+     * Stores the cache of flight paths.
+     */
+    private final Map<String, FlightPathNode[]> cache         = new HashMap<>();
+    /**
      * Stores the central area, which the drone cannot leave once it has entered.
      */
     private final NamedRegion                   centralArea;
@@ -29,10 +33,6 @@ public class FlightPathGenerator {
      * Stores the time limit for the A* algorithm.
      */
     private final int                           timeLimit;
-    /**
-     * Stores the cache of flight paths.
-     */
-    private final Map<String, FlightPathNode[]> cache         = new HashMap<>();
 
     /**
      * Constructs a new {@link FlightPathGenerator} object.

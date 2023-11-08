@@ -34,31 +34,6 @@ public class RESTManager {
     }
 
     /**
-     * Performs a GET request to the server.
-     *
-     * @param endpoint The endpoint to call.
-     * @return The response from the server.
-     */
-    private <T> T GET(Endpoint<T> endpoint) {
-        return GET(endpoint, "");
-    }
-
-    /**
-     * Performs a GET request to the server.
-     *
-     * @param endpoint The endpoint to call.
-     * @param args     The arguments to pass to the endpoint.
-     * @return The response from the server.
-     */
-    private <T> T GET(Endpoint<T> endpoint, String args) {
-        try {
-            return objectMapper.readValue(new URL(baseUrl + endpoint.url() + args), endpoint.clazz());
-        } catch (IOException err) {
-            throw new RuntimeException(err);
-        }
-    }
-
-    /**
      * Makes a request to the `restaurants` endpoint to get the list of restaurants.
      *
      * @return The list of restaurants.
@@ -93,5 +68,30 @@ public class RESTManager {
      */
     public NamedRegion[] getNoFlyZones() {
         return GET(Endpoints.NO_FLY_ZONES);
+    }
+
+    /**
+     * Performs a GET request to the server.
+     *
+     * @param endpoint The endpoint to call.
+     * @return The response from the server.
+     */
+    private <T> T GET(Endpoint<T> endpoint) {
+        return GET(endpoint, "");
+    }
+
+    /**
+     * Performs a GET request to the server.
+     *
+     * @param endpoint The endpoint to call.
+     * @param args     The arguments to pass to the endpoint.
+     * @return The response from the server.
+     */
+    private <T> T GET(Endpoint<T> endpoint, String args) {
+        try {
+            return objectMapper.readValue(new URL(baseUrl + endpoint.url() + args), endpoint.clazz());
+        } catch (IOException err) {
+            throw new RuntimeException(err);
+        }
     }
 }

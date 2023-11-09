@@ -81,10 +81,14 @@ public class PizzaDronz {
             return;
         }
 
-        long startTime = System.currentTimeMillis();
-        System.out.println("Starting PizzaDronz.");
-        new PizzaDronz(args[1], LocalDate.parse(args[0]));
-        System.out.println("Exiting PizzaDronz. Calculations took " + (System.currentTimeMillis() - startTime) + "ms.");
+        try {
+            long startTime = System.currentTimeMillis();
+            System.out.println("Starting PizzaDronz.");
+            new PizzaDronz(args[1], LocalDate.parse(args[0]));
+            System.out.println("Exiting PizzaDronz. Runtime " + (System.currentTimeMillis() - startTime) + "ms.");
+        } catch (Exception err) {
+            System.err.println("An exception occurred which the system could not recover from: " + err.getMessage());
+        }
     }
 
     /**

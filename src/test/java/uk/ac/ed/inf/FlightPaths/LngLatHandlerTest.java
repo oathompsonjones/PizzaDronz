@@ -1,7 +1,6 @@
-package uk.ac.ed.inf;
+package uk.ac.ed.inf.FlightPaths;
 
 import junit.framework.TestCase;
-import uk.ac.ed.inf.FlightPaths.LngLatHandler;
 import uk.ac.ed.inf.ilp.constant.SystemConstants;
 import uk.ac.ed.inf.ilp.data.LngLat;
 import uk.ac.ed.inf.ilp.data.NamedRegion;
@@ -39,10 +38,7 @@ public class LngLatHandlerTest extends TestCase {
         LngLat[] positions = new LngLat[] {
                 new LngLat(0, 0),
                 new LngLat(0, SystemConstants.DRONE_IS_CLOSE_DISTANCE),
-                new LngLat(
-                        SystemConstants.DRONE_IS_CLOSE_DISTANCE,
-                        SystemConstants.DRONE_IS_CLOSE_DISTANCE
-                )
+                new LngLat(SystemConstants.DRONE_IS_CLOSE_DISTANCE, SystemConstants.DRONE_IS_CLOSE_DISTANCE)
         };
         // Test that the result is true when the parameters are the same
         assertTrue(handler.isCloseTo(positions[0], positions[0]));
@@ -54,8 +50,8 @@ public class LngLatHandlerTest extends TestCase {
 
     public void testIsInRegion() {
         // Test a triangular region
-        LngLat[] vertices  = new LngLat[] { new LngLat(0, 0), new LngLat(4, 0), new LngLat(2, 4) };
-        NamedRegion region = new NamedRegion("Triangular Region", vertices);
+        LngLat[]    vertices = new LngLat[] { new LngLat(0, 0), new LngLat(4, 0), new LngLat(2, 4) };
+        NamedRegion region   = new NamedRegion("Triangular Region", vertices);
         // Test a point in the middle(ish)
         assertTrue(handler.isInRegion(new LngLat(2, 2), region));
         // Test the corners themselves
@@ -106,5 +102,33 @@ public class LngLatHandlerTest extends TestCase {
         assertTrue(0.0 < nextPos.lng() + 1e-12 && 0.0 > nextPos.lng() - 1e-12);
         assertTrue(-SystemConstants.DRONE_MOVE_DISTANCE < nextPos.lat() + 1e-12
                    && -SystemConstants.DRONE_MOVE_DISTANCE > nextPos.lat() - 1e-12);
+    }
+
+    public void testLineCrossesRegion() {
+        // Test a triangular region
+        LngLat[] vertices = new LngLat[] {
+                new LngLat(0, 0), new LngLat(4, 0), new LngLat(2, 4)
+        };
+        NamedRegion region = new NamedRegion("Triangular Region", vertices);
+        // Test the edges of the region
+        assertTrue(handler.lineCrossesRegion(new LngLat(0, 0), new LngLat(4, 0), region));
+        assertTrue(handler.lineCrossesRegion(new LngLat(4, 0), new LngLat(2, 4), region));
+        assertTrue(handler.lineCrossesRegion(new LngLat(2, 4), new LngLat(0, 0), region));
+        // Test lines which stop at the vertices
+        assertTrue(handler.lineCrossesRegion(new LngLat(0, 0), new LngLat(0, 4), region));
+        assertTrue(handler.lineCrossesRegion(new LngLat(0, 4), new LngLat(4, 0), region));
+        assertTrue(handler.lineCrossesRegion(new LngLat(4, 0), new LngLat(4, 2), region));
+        // Test lines which cross the region
+        assertTrue(handler.lineCrossesRegion(new LngLat(0, 0), new LngLat(4, 4), region));
+        assertTrue(handler.lineCrossesRegion(new LngLat(0, 4), new LngLat(4, 2), region));
+        // Test lines which do not cross the region
+        assertFalse(handler.lineCrossesRegion(new LngLat(0, 1), new LngLat(0, 2), region));
+        assertFalse(handler.lineCrossesRegion(new LngLat(1, 6), new LngLat(2, 8), region));
+        // Test lines entirely within the region
+        assertTrue(handler.lineCrossesRegion(new LngLat(1, 1), new LngLat(2, 2), region));
+        // Test lines which are really just points
+        assertTrue(handler.lineCrossesRegion(new LngLat(0, 0), new LngLat(0, 0), region));
+        assertTrue(handler.lineCrossesRegion(new LngLat(1, 2), new LngLat(1, 2), region));
+        assertTrue(handler.lineCrossesRegion(new LngLat(2, 2), new LngLat(2, 2), region));
     }
 }

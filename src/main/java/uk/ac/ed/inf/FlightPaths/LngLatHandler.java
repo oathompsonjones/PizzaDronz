@@ -96,6 +96,8 @@ public class LngLatHandler implements LngLatHandling {
             var    line2   = new Line2D.Double(vertex1.lng(), vertex1.lat(), vertex2.lng(), vertex2.lat());
             if (line1.intersectsLine(line2)) return true;
         }
-        return false;
+        // At this point, the line is either entirely within the region or entirely outside the region, so we can
+        // just check if one point is in the region
+        return isInRegion(pos1, region);
     }
 }

@@ -21,4 +21,8 @@ public interface Endpoints {
      * The endpoint to get the list of no-fly zones.
      */
     Endpoint<NamedRegion[]> NO_FLY_ZONES = new Endpoint<>("noFlyZones", NamedRegion[].class);
+    /**
+     * The endpoint to check if the server is alive.
+     */
+    Endpoint<Boolean>       IS_ALIVE     = new Endpoint<>("isAlive", boolean.class);
 }

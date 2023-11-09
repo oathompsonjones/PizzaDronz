@@ -21,7 +21,7 @@ public class RESTManager {
     /**
      * The base URL of the server.
      */
-    private       String       baseUrl;
+    private final String       baseUrl;
 
     /**
      * Creates a new RESTManager object.
@@ -29,8 +29,7 @@ public class RESTManager {
      * @param baseUrl The base URL of the server.
      */
     public RESTManager(String baseUrl) {
-        this.baseUrl = baseUrl;
-        if (!this.baseUrl.endsWith("/")) this.baseUrl += "/";
+        this.baseUrl = baseUrl.endsWith("/") ? baseUrl : baseUrl + "/";
     }
 
     /**

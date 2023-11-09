@@ -54,7 +54,7 @@ public class RESTManager {
      * @return The list of orders for the given date.
      */
     public Order[] getOrders(LocalDate date) {
-        return GET(Endpoints.ORDERS, "/" + date);
+        return date == null ? GET(Endpoints.ORDERS) : GET(Endpoints.ORDERS, "/" + date);
     }
 
     /**

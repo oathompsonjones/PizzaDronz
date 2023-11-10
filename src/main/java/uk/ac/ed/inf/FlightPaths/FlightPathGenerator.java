@@ -58,8 +58,10 @@ public class FlightPathGenerator {
     public FlightPathNode[] generateFullPath(Order[] orders) {
         var fullPath = new LinkedList<FlightPathNode>();
 
-        for (Order order : orders) {
-            List<FlightPathNode> toAppleton   = generate(order);
+        for (int i = 0; i < orders.length; i++) {
+            Order                order      = orders[i];
+            List<FlightPathNode> toAppleton = generate(order);
+            if (toAppleton.isEmpty()) continue;
             List<FlightPathNode> toRestaurant = reversePath(toAppleton);
 
             // Go from Appleton to restaurant.
@@ -81,7 +83,10 @@ public class FlightPathGenerator {
                                             999,
                                             toRestaurant.get(0).toCoordinate()
             ));
+
+            System.out.print("\rGenerated flight path for " + (i + 1) + " orders.");
         }
+        System.out.println();
 
         return fullPath.toArray(FlightPathNode[]::new);
     }

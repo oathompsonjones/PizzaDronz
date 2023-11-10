@@ -17,7 +17,8 @@ import uk.ac.ed.inf.ilp.data.Restaurant;
 
 import java.io.File;
 import java.time.LocalDate;
-import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Main class for the PizzaDronz application.
@@ -54,15 +55,9 @@ public class PizzaDronz {
                                                           restManager.getRestaurants()
         );
 
-        // Fetch and validate the orders.
+        // Fetch and validate the orders, then generate the flight path.
         Order[] validOrders = fetchAndValidateOrders(date);
-        System.out.println(
-                "Fetched " + orders.length + " orders from " + apiUrl + " for " + date + ". " + validOrders.length
-                + " are valid.");
-
-        // Generate the flight path.
         flightPath = flightPathGenerator.generateFullPath(validOrders);
-        System.out.println("Generated flight path.");
 
         // Generate the JSON files.
         generateFlightPathJSON(date);
@@ -85,7 +80,7 @@ public class PizzaDronz {
 
         try {
             long startTime = System.currentTimeMillis();
-            System.out.println("Starting PizzaDronz.");
+            System.out.println("Starting PizzaDronz with date " + args[0] + " and REST URL " + args[1] + ".");
             new PizzaDronz(args[1], LocalDate.parse(args[0]));
             System.out.println("Exiting PizzaDronz. Runtime: " + (System.currentTimeMillis() - startTime) + "ms.");
         } catch (Exception err) {
@@ -103,12 +98,15 @@ public class PizzaDronz {
     private Order[] fetchAndValidateOrders(LocalDate date) {
         Restaurant[] restaurants = restManager.getRestaurants();
         orders = restManager.getOrders(date);
-        // Each order in this.orders will be validated as a side effect, before filtering out any invalid orders.
-        return Arrays
-                .stream(orders)
-                .filter(order -> orderValidator.validateOrder(order, restaurants).getOrderStatus()
-                                 == OrderStatus.VALID_BUT_NOT_DELIVERED)
-                .toArray(Order[]::new);
+        List<Order> validOrders = new LinkedList<>();
+        for (int i = 0; i < orders.length; i++) {
+            Order       order  = orders[i];
+            OrderStatus status = orderValidator.validateOrder(order, restaurants).getOrderStatus();
+            if (status == OrderStatus.VALID_BUT_NOT_DELIVERED) validOrders.add(order);
+            System.out.print("\rFetched " + validOrders.size() + " valid orders out of " + (i + 1) + " total orders.");
+        }
+        System.out.println();
+        return validOrders.toArray(Order[]::new);
     }
 
     /**

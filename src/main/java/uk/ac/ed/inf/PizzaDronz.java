@@ -55,8 +55,10 @@ public class PizzaDronz {
         );
 
         // Fetch and validate the orders.
-        Order[] validOrders = fetchValidOrders(date);
-        System.out.println("Fetched " + orders.length + " orders. " + validOrders.length + " are valid.");
+        Order[] validOrders = fetchAndValidateOrders(date);
+        System.out.println(
+                "Fetched " + orders.length + " orders from " + apiUrl + " for " + date + ". " + validOrders.length
+                + " are valid.");
 
         // Generate the flight path.
         flightPath = flightPathGenerator.generateFullPath(validOrders);
@@ -98,7 +100,7 @@ public class PizzaDronz {
      *
      * @return The valid orders.
      */
-    private Order[] fetchValidOrders(LocalDate date) {
+    private Order[] fetchAndValidateOrders(LocalDate date) {
         Restaurant[] restaurants = restManager.getRestaurants();
         orders = restManager.getOrders(date);
         // Each order in this.orders will be validated as a side effect, before filtering out any invalid orders.

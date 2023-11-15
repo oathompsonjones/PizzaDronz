@@ -101,7 +101,7 @@ public class OrderValidator implements OrderValidation {
      */
     private boolean creditCardNumberIsValid(String creditCardNumber) {
         // Check that the number is a valid card number for either Visa or MasterCard
-        return creditCardNumber.matches("^[245]\\d{15}$");
+        return creditCardNumber != null && creditCardNumber.matches("^[245]\\d{15}$");
     }
 
     /**
@@ -141,7 +141,7 @@ public class OrderValidator implements OrderValidation {
      */
     private boolean creditCardCVVIsValid(String cvv) {
         // Check that the CVV is a three-digit number
-        return cvv.matches("^\\d{3}$");
+        return cvv != null && cvv.matches("^\\d{3}$");
     }
 
     /**
@@ -154,11 +154,16 @@ public class OrderValidator implements OrderValidation {
      * @return whether the total price of the order is correct
      */
     private boolean totalIsCorrect(int totalOnOrder, Pizza[] pizzas, Pizza[] menu) {
+        if (pizzas == null || menu == null) return false;
         // Check that the price of each pizza sums to the total price of the order.
         int total = SystemConstants.ORDER_CHARGE_IN_PENCE;
         for (Pizza pizza : pizzas) {
             // Find the pizza on the menu
-            Pizza menuPizza = Arrays.stream(menu).filter(p -> p.name().equals(pizza.name())).toArray(Pizza[]::new)[0];
+            Pizza menuPizza = Arrays
+                    .stream(menu)
+                    .filter(Objects::nonNull)
+                    .filter(p -> p.name().equals(pizza.name()))
+                    .toArray(Pizza[]::new)[0];
             // Add the price of the pizza to the total
             total += menuPizza.priceInPence();
         }
@@ -174,7 +179,7 @@ public class OrderValidator implements OrderValidation {
      */
     private boolean pizzaCountIsValid(Pizza[] pizzas) {
         // Check the number of pizzas doesn't exceed the system maximum per order.
-        return pizzas.length <= SystemConstants.MAX_PIZZAS_PER_ORDER;
+        return pizzas != null && pizzas.length <= SystemConstants.MAX_PIZZAS_PER_ORDER;
     }
 
     /**
@@ -187,14 +192,18 @@ public class OrderValidator implements OrderValidation {
      */
     private Restaurant[] pizzasAllExist(Pizza[] pizzas, Restaurant[] restaurants) {
         // Check that there is at least one pizza in the order
-        if (pizzas.length == 0) return new Restaurant[] { null };
+        if (pizzas == null || pizzas.length == 0) return new Restaurant[] { null };
         var pizzaRestaurants = new Restaurant[pizzas.length];
         // For each pizza...
         for (int i = 0; i < pizzas.length; i++) {
             // Check each restaurant...
             for (Restaurant restaurant : restaurants) {
                 // Check the names of each pizza on the restaurant's menu...
-                String[] pizzaNames = Arrays.stream(restaurant.menu()).map(Pizza::name).toArray(String[]::new);
+                String[] pizzaNames = Arrays
+                        .stream(restaurant.menu())
+                        .filter(Objects::nonNull)
+                        .map(Pizza::name)
+                        .toArray(String[]::new);
                 for (String pizzaName : pizzaNames) {
                     // If the pizza is found, set the restaurant value in the array
                     if (pizzaName.equals(pizzas[i].name())) {
@@ -228,6 +237,9 @@ public class OrderValidator implements OrderValidation {
      */
     private boolean restaurantIsOpen(Restaurant restaurant, LocalDate orderDate) {
         // Check that the restaurant is open today
-        return Arrays.stream(restaurant.openingDays()).anyMatch(day -> day == orderDate.getDayOfWeek());
+        return Arrays
+                .stream(restaurant.openingDays())
+                .filter(Objects::nonNull)
+                .anyMatch(day -> day == orderDate.getDayOfWeek());
     }
 }

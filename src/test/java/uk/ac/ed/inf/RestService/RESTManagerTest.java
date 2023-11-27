@@ -6,7 +6,16 @@ import uk.ac.ed.inf.ilp.data.Order;
 import java.time.LocalDate;
 
 public class RESTManagerTest extends TestCase {
-    RESTManager manager = new RESTManager("https://ilp-rest.azurewebsites.net");
+    RESTManager manager;
+
+    public RESTManagerTest(String testName) {
+        super(testName);
+        try {
+            manager = new RESTManager("https://ilp-rest.azurewebsites.net");
+        } catch (Exception e) {
+            fail("Exception thrown when creating RESTManager");
+        }
+    }
 
     public void testGetRestaurants() {
         try {

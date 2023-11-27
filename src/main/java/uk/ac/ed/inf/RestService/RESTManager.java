@@ -30,7 +30,11 @@ public class RESTManager {
      */
     public RESTManager(String baseUrl) throws IOException {
         this.baseUrl = baseUrl.endsWith("/") ? baseUrl : baseUrl + "/";
-        GET(Endpoints.IS_ALIVE);
+        try {
+            GET(Endpoints.IS_ALIVE);
+        } catch (Exception e) {
+            throw new IOException("No running server was found at " + baseUrl + ".");
+        }
     }
 
     /**

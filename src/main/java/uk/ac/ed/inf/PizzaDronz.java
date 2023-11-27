@@ -78,10 +78,19 @@ public class PizzaDronz {
             return;
         }
 
+        // Check if the date is valid.
+        LocalDate date;
+        try {
+            date = LocalDate.parse(args[0]);
+        } catch (Exception err) {
+            System.err.println("The date provided is invalid. Please ensure the date has the format: YYYY-MM-DD.");
+            return;
+        }
+
         try {
             long startTime = System.currentTimeMillis();
             System.out.println("Starting PizzaDronz with date " + args[0] + " and REST URL " + args[1] + ".");
-            new PizzaDronz(args[1], LocalDate.parse(args[0]));
+            new PizzaDronz(args[1], date);
             System.out.println("Exiting PizzaDronz. Runtime: " + (System.currentTimeMillis() - startTime) + "ms.");
         } catch (Exception err) {
             System.err.println("An exception occurred which the system could not recover from: " + err.getMessage());

@@ -30,10 +30,14 @@ public class RESTManager {
      */
     public RESTManager(String baseUrl) {
         this.baseUrl = baseUrl.endsWith("/") ? baseUrl : baseUrl + "/";
+        boolean isAlive = true;
         try {
-            GET(Endpoints.IS_ALIVE);
+            isAlive = GET(Endpoints.IS_ALIVE);
+            if (!isAlive) throw new Exception();
         } catch (Exception err) {
-            throw new RuntimeException("Server is not alive");
+            throw new RuntimeException(isAlive
+                                       ? "The server at " + baseUrl + " is not alive."
+                                       : "The server at " + baseUrl + " was not found.");
         }
     }
 

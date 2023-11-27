@@ -16,6 +16,7 @@ import uk.ac.ed.inf.ilp.data.Order;
 import uk.ac.ed.inf.ilp.data.Restaurant;
 
 import java.io.File;
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.LinkedList;
 import java.util.List;
@@ -47,7 +48,7 @@ public class PizzaDronz {
      * @param apiUrl The URL of the API.
      * @param date   The date to generate the flight paths for.
      */
-    private PizzaDronz(String apiUrl, LocalDate date) {
+    private PizzaDronz(String apiUrl, LocalDate date) throws IOException {
         // Set up the RESTManager and the FlightPathGenerator.
         restManager = new RESTManager(apiUrl);
         var flightPathGenerator = new FlightPathGenerator(restManager.getCentralArea(),

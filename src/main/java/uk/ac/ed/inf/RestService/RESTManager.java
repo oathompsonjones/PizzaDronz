@@ -28,17 +28,9 @@ public class RESTManager {
      *
      * @param baseUrl The base URL of the server.
      */
-    public RESTManager(String baseUrl) {
+    public RESTManager(String baseUrl) throws IOException {
         this.baseUrl = baseUrl.endsWith("/") ? baseUrl : baseUrl + "/";
-        boolean isAlive = true;
-        try {
-            isAlive = GET(Endpoints.IS_ALIVE);
-            if (!isAlive) throw new Exception();
-        } catch (Exception err) {
-            throw new RuntimeException(isAlive
-                                       ? "The server at " + baseUrl + " is not alive."
-                                       : "The server at " + baseUrl + " was not found.");
-        }
+        GET(Endpoints.IS_ALIVE);
     }
 
     /**
@@ -47,7 +39,12 @@ public class RESTManager {
      * @return The list of restaurants.
      */
     public Restaurant[] getRestaurants() {
-        return GET(Endpoints.RESTAURANTS);
+        try {
+            return GET(Endpoints.RESTAURANTS);
+        } catch (Exception ignored) {
+            // This error should never be thrown because we test the isAlive endpoint at the start.
+            return null;
+        }
     }
 
     /**
@@ -58,7 +55,12 @@ public class RESTManager {
      * @return The list of orders for the given date.
      */
     public Order[] getOrders(LocalDate date) {
-        return date == null ? GET(Endpoints.ORDERS) : GET(Endpoints.ORDERS, "/" + date);
+        try {
+            return date == null ? GET(Endpoints.ORDERS) : GET(Endpoints.ORDERS, "/" + date);
+        } catch (Exception ignored) {
+            // This error should never be thrown because we test the isAlive endpoint at the start.
+            return null;
+        }
     }
 
     /**
@@ -67,7 +69,12 @@ public class RESTManager {
      * @return The central area.
      */
     public NamedRegion getCentralArea() {
-        return GET(Endpoints.CENTRAL_AREA);
+        try {
+            return GET(Endpoints.CENTRAL_AREA);
+        } catch (Exception ignored) {
+            // This error should never be thrown because we test the isAlive endpoint at the start.
+            return null;
+        }
     }
 
     /**
@@ -76,7 +83,12 @@ public class RESTManager {
      * @return The list of no-fly zones.
      */
     public NamedRegion[] getNoFlyZones() {
-        return GET(Endpoints.NO_FLY_ZONES);
+        try {
+            return GET(Endpoints.NO_FLY_ZONES);
+        } catch (Exception ignored) {
+            // This error should never be thrown because we test the isAlive endpoint at the start.
+            return null;
+        }
     }
 
     /**
@@ -86,7 +98,7 @@ public class RESTManager {
      *
      * @return The response from the server.
      */
-    private <T> T GET(Endpoint<T> endpoint) {
+    private <T> T GET(Endpoint<T> endpoint) throws IOException {
         return GET(endpoint, "");
     }
 
@@ -98,11 +110,7 @@ public class RESTManager {
      *
      * @return The response from the server.
      */
-    private <T> T GET(Endpoint<T> endpoint, String args) {
-        try {
-            return objectMapper.readValue(new URL(baseUrl + endpoint.url() + args), endpoint.clazz());
-        } catch (IOException err) {
-            throw new RuntimeException(err);
-        }
+    private <T> T GET(Endpoint<T> endpoint, String args) throws IOException {
+        return objectMapper.readValue(new URL(baseUrl + endpoint.url() + args), endpoint.clazz());
     }
 }

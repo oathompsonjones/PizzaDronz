@@ -49,7 +49,21 @@
     <dependency>
       <groupId>uk.ac.ed.inf.ilp</groupId>
       <artifactId>data</artifactId>
-      <version>1.0.0-SNAPSHOT</version>
+      <version>1.0-SNAPSHOT</version>
+      <scope>system</scope>
+      <systemPath>${pom.basedir}/libraries/IlpDataObjects.jar</systemPath>
+    </dependency>
+    <dependency>
+      <groupId>uk.ac.ed.inf.ilp</groupId>
+      <artifactId>constant</artifactId>
+      <version>1.0-SNAPSHOT</version>
+      <scope>system</scope>
+      <systemPath>${pom.basedir}/libraries/IlpDataObjects.jar</systemPath>
+    </dependency>
+    <dependency>
+      <groupId>uk.ac.ed.inf.ilp</groupId>
+      <artifactId>interfaces</artifactId>
+      <version>1.0-SNAPSHOT</version>
       <scope>system</scope>
       <systemPath>${pom.basedir}/libraries/IlpDataObjects.jar</systemPath>
     </dependency>

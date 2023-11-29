@@ -281,6 +281,51 @@
           55.94449876875712
         ]
       }
-    }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "La Trattoria",
+        "marker-color": "#0000ff",
+        "marker-symbol": "building"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -3.1810810679852035,
+          55.938910643735845
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Halal Pizza",
+        "marker-color": "#0000ff",
+        "marker-symbol": "building"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -3.185428203143916,
+          55.945846113595
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "World of Pizza",
+        "marker-color": "#0000ff",
+        "marker-symbol": "building"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -3.179798972064253,
+          55.939884084483
+        ]
+      }
+    }        
   ]
 }

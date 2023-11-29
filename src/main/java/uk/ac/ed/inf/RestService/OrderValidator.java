@@ -128,8 +128,8 @@ public class OrderValidator implements OrderValidation {
 
         // Check that the expiry date has not passed
         int currentMonth = orderDate.getMonthValue();
-        int currentYear  = orderDate.getYear();
-        return expiryYear > currentYear % 100 || expiryYear == currentYear % 100 && expiryMonth > currentMonth;
+        int currentYear  = orderDate.getYear() % 100;
+        return expiryYear > currentYear || expiryYear == currentYear && expiryMonth > currentMonth;
     }
 
     /**

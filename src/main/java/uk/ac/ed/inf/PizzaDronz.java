@@ -36,7 +36,7 @@ public class PizzaDronz {
     /**
      * Stores the flight paths.
      */
-    private       FlightPathNode[] flightPath     = null;
+    private final FlightPathNode[] flightPath;
     /**
      * Stores the orders.
      */

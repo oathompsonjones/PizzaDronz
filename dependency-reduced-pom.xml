@@ -33,6 +33,13 @@
       </plugin>
     </plugins>
   </build>
+  <repositories>
+    <repository>
+      <id>proj</id>
+      <name>proj</name>
+      <url>file://${project.basedir}/libraries</url>
+    </repository>
+  </repositories>
   <dependencies>
     <dependency>
       <groupId>junit</groupId>
@@ -45,13 +52,6 @@
           <groupId>org.hamcrest</groupId>
         </exclusion>
       </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>uk.ac.ed.inf</groupId>
-      <artifactId>IlpDataObjects</artifactId>
-      <version>1.0.0-SNAPSHOT</version>
-      <scope>system</scope>
-      <systemPath>${pom.basedir}/libraries/IlpDataObjects.jar</systemPath>
     </dependency>
   </dependencies>
   <properties>

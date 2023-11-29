@@ -56,7 +56,7 @@
         <dependency>
             <groupId>uk.ac.ed.inf.ilp</groupId>
             <artifactId>data</artifactId>
-            <version>1.0</version>
+            <version>1.0.0-SNAPSHOT</version>
             <scope>system</scope>
             <systemPath>${pom.basedir}/libraries/IlpDataObjects.jar</systemPath>
         </dependency>

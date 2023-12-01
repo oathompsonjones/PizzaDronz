@@ -350,6 +350,11 @@ public class OrderValidatorTest extends TestCase {
         assertEquals(OrderValidationCode.EXPIRY_DATE_INVALID, order.getOrderValidationCode());
 
         order = generateBasicOrder();
+        order.setCreditCardInformation(new CreditCardInformation("4123456789012345", "10/23", "123"));
+        order = validator.validateOrder(order, generateRestaurants());
+        assertNotSame(OrderValidationCode.EXPIRY_DATE_INVALID, order.getOrderValidationCode());
+
+        order = generateBasicOrder();
         order.setCreditCardInformation(new CreditCardInformation("4123456789012345", "01/30", "123"));
         order = validator.validateOrder(order, generateRestaurants());
         assertNotSame(OrderValidationCode.EXPIRY_DATE_INVALID, order.getOrderValidationCode());

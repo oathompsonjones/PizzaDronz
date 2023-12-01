@@ -150,6 +150,26 @@ public class OrderValidatorTest extends TestCase {
 
         order = generateBasicOrder();
         order.setPizzasInOrder(new Pizza[] {
+                new Pizza("Margarita", 1000), new Pizza("Calzone", 1400), new Pizza("invalid pizza", 1000), null
+        });
+        order = validator.validateOrder(order, generateRestaurants());
+        assertEquals(OrderStatus.INVALID, order.getOrderStatus());
+        assertEquals(OrderValidationCode.PIZZA_NOT_DEFINED, order.getOrderValidationCode());
+
+        order = generateBasicOrder();
+        order.setPizzasInOrder(new Pizza[] { null });
+        order = validator.validateOrder(order, generateRestaurants());
+        assertEquals(OrderStatus.INVALID, order.getOrderStatus());
+        assertEquals(OrderValidationCode.PIZZA_NOT_DEFINED, order.getOrderValidationCode());
+
+        order = generateBasicOrder();
+        order.setPizzasInOrder(null);
+        order = validator.validateOrder(order, generateRestaurants());
+        assertEquals(OrderStatus.INVALID, order.getOrderStatus());
+        assertEquals(OrderValidationCode.PIZZA_NOT_DEFINED, order.getOrderValidationCode());
+
+        order = generateBasicOrder();
+        order.setPizzasInOrder(new Pizza[] {
                 new Pizza("Margarita", 1000), new Pizza("Calzone", 1400), new Pizza("Meat Lover", 1400)
         });
         order = validator.validateOrder(order, generateRestaurants());
@@ -193,6 +213,12 @@ public class OrderValidatorTest extends TestCase {
         // Test that an order on a closed day is rejected
         Order order = generateBasicOrder();
         order.setOrderDate(LocalDate.of(2023, 10, 4));
+        order = validator.validateOrder(order, generateRestaurants());
+        assertEquals(OrderStatus.INVALID, order.getOrderStatus());
+        assertEquals(OrderValidationCode.RESTAURANT_CLOSED, order.getOrderValidationCode());
+
+        order = generateBasicOrder();
+        order.setOrderDate(null);
         order = validator.validateOrder(order, generateRestaurants());
         assertEquals(OrderStatus.INVALID, order.getOrderStatus());
         assertEquals(OrderValidationCode.RESTAURANT_CLOSED, order.getOrderValidationCode());
@@ -276,6 +302,12 @@ public class OrderValidatorTest extends TestCase {
         assertEquals(OrderValidationCode.CARD_NUMBER_INVALID, order.getOrderValidationCode());
 
         order = generateBasicOrder();
+        order.setCreditCardInformation(new CreditCardInformation(null, "01/01", "123"));
+        order = validator.validateOrder(order, generateRestaurants());
+        assertEquals(OrderStatus.INVALID, order.getOrderStatus());
+        assertEquals(OrderValidationCode.CARD_NUMBER_INVALID, order.getOrderValidationCode());
+
+        order = generateBasicOrder();
         order.setCreditCardInformation(new CreditCardInformation("4123456789012345", "01/01", "123"));
         order = validator.validateOrder(order, generateRestaurants());
         assertNotSame(OrderValidationCode.CARD_NUMBER_INVALID, order.getOrderValidationCode());
@@ -312,6 +344,12 @@ public class OrderValidatorTest extends TestCase {
         assertEquals(OrderValidationCode.EXPIRY_DATE_INVALID, order.getOrderValidationCode());
 
         order = generateBasicOrder();
+        order.setCreditCardInformation(new CreditCardInformation("4123456789012345", null, "123"));
+        order = validator.validateOrder(order, generateRestaurants());
+        assertEquals(OrderStatus.INVALID, order.getOrderStatus());
+        assertEquals(OrderValidationCode.EXPIRY_DATE_INVALID, order.getOrderValidationCode());
+
+        order = generateBasicOrder();
         order.setCreditCardInformation(new CreditCardInformation("4123456789012345", "01/30", "123"));
         order = validator.validateOrder(order, generateRestaurants());
         assertNotSame(OrderValidationCode.EXPIRY_DATE_INVALID, order.getOrderValidationCode());
@@ -339,6 +377,12 @@ public class OrderValidatorTest extends TestCase {
 
         order = generateBasicOrder();
         order.setCreditCardInformation(new CreditCardInformation("4123456789012345", "01/30", "1234"));
+        order = validator.validateOrder(order, generateRestaurants());
+        assertEquals(OrderStatus.INVALID, order.getOrderStatus());
+        assertEquals(OrderValidationCode.CVV_INVALID, order.getOrderValidationCode());
+
+        order = generateBasicOrder();
+        order.setCreditCardInformation(new CreditCardInformation("4123456789012345", "01/30", null));
         order = validator.validateOrder(order, generateRestaurants());
         assertEquals(OrderStatus.INVALID, order.getOrderStatus());
         assertEquals(OrderValidationCode.CVV_INVALID, order.getOrderValidationCode());

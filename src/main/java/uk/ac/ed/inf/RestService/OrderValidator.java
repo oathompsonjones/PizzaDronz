@@ -26,14 +26,14 @@ public class OrderValidator implements OrderValidation {
      * @return the validated order
      */
     public Order validateOrder(Order order, Restaurant[] definedRestaurants) {
-        // Check that the number of pizzas is valid
-        if (!pizzaCountIsValid(order.getPizzasInOrder()))
-            return setValidationCodeAndStatus(order, OrderValidationCode.MAX_PIZZA_COUNT_EXCEEDED);
-
         // Check that all the pizzas exist
         Restaurant[] pizzaRestaurants = pizzasAllExist(order.getPizzasInOrder(), definedRestaurants);
         if (Arrays.stream(pizzaRestaurants).anyMatch(Objects::isNull))
             return setValidationCodeAndStatus(order, OrderValidationCode.PIZZA_NOT_DEFINED);
+
+        // Check that the number of pizzas is valid
+        if (!pizzaCountIsValid(order.getPizzasInOrder()))
+            return setValidationCodeAndStatus(order, OrderValidationCode.MAX_PIZZA_COUNT_EXCEEDED);
 
         // Check that all the pizzas are from the same restaurant
         Restaurant restaurant = pizzaAreFromSameRestaurant(pizzaRestaurants);
@@ -179,7 +179,7 @@ public class OrderValidator implements OrderValidation {
      */
     private boolean pizzaCountIsValid(Pizza[] pizzas) {
         // Check the number of pizzas doesn't exceed the system maximum per order.
-        return pizzas != null && pizzas.length <= SystemConstants.MAX_PIZZAS_PER_ORDER;
+        return pizzas.length <= SystemConstants.MAX_PIZZAS_PER_ORDER;
     }
 
     /**
@@ -196,6 +196,7 @@ public class OrderValidator implements OrderValidation {
         var pizzaRestaurants = new Restaurant[pizzas.length];
         // For each pizza...
         for (int i = 0; i < pizzas.length; i++) {
+            if (pizzas[i] == null) continue;
             // Check each restaurant...
             for (Restaurant restaurant : restaurants) {
                 // Check the names of each pizza on the restaurant's menu...
@@ -237,7 +238,7 @@ public class OrderValidator implements OrderValidation {
      */
     private boolean restaurantIsOpen(Restaurant restaurant, LocalDate orderDate) {
         // Check that the restaurant is open today
-        return Arrays
+        return orderDate != null && Arrays
                 .stream(restaurant.openingDays())
                 .filter(Objects::nonNull)
                 .anyMatch(day -> day == orderDate.getDayOfWeek());

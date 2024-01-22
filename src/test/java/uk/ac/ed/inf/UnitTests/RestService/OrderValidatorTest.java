@@ -1,6 +1,7 @@
-package uk.ac.ed.inf.RestService;
+package uk.ac.ed.inf.UnitTests.RestService;
 
 import junit.framework.TestCase;
+import uk.ac.ed.inf.RestService.OrderValidator;
 import uk.ac.ed.inf.ilp.constant.OrderStatus;
 import uk.ac.ed.inf.ilp.constant.OrderValidationCode;
 import uk.ac.ed.inf.ilp.constant.SystemConstants;

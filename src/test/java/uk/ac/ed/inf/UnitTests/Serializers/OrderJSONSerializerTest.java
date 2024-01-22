@@ -1,8 +1,9 @@
-package uk.ac.ed.inf.Serializers;
+package uk.ac.ed.inf.UnitTests.Serializers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import junit.framework.TestCase;
+import uk.ac.ed.inf.Serializers.OrderJSONSerializer;
 import uk.ac.ed.inf.ilp.constant.OrderStatus;
 import uk.ac.ed.inf.ilp.constant.OrderValidationCode;
 import uk.ac.ed.inf.ilp.data.CreditCardInformation;

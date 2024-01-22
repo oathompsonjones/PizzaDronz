@@ -1,6 +1,7 @@
-package uk.ac.ed.inf.RestService;
+package uk.ac.ed.inf.UnitTests.RestService;
 
 import junit.framework.TestCase;
+import uk.ac.ed.inf.RestService.RESTManager;
 import uk.ac.ed.inf.ilp.data.Order;
 
 import java.time.LocalDate;

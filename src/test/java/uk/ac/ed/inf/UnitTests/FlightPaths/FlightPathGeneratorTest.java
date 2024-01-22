@@ -1,6 +1,7 @@
-package uk.ac.ed.inf.FlightPaths;
+package uk.ac.ed.inf.UnitTests.FlightPaths;
 
 import junit.framework.TestCase;
+import uk.ac.ed.inf.FlightPaths.FlightPathGenerator;
 import uk.ac.ed.inf.ilp.data.*;
 
 import java.time.DayOfWeek;

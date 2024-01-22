@@ -1,6 +1,7 @@
-package uk.ac.ed.inf.FlightPaths;
+package uk.ac.ed.inf.UnitTests.FlightPaths;
 
 import junit.framework.TestCase;
+import uk.ac.ed.inf.FlightPaths.LngLatHandler;
 import uk.ac.ed.inf.ilp.constant.SystemConstants;
 import uk.ac.ed.inf.ilp.data.LngLat;
 import uk.ac.ed.inf.ilp.data.NamedRegion;

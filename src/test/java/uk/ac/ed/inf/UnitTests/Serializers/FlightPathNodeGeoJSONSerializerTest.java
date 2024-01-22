@@ -1,9 +1,10 @@
-package uk.ac.ed.inf.Serializers;
+package uk.ac.ed.inf.UnitTests.Serializers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import junit.framework.TestCase;
 import uk.ac.ed.inf.FlightPaths.FlightPathNode;
+import uk.ac.ed.inf.Serializers.FlightPathNodeGeoJSONSerializer;
 import uk.ac.ed.inf.ilp.data.LngLat;
 
 import java.io.IOException;
@@ -11,8 +12,11 @@ import java.io.StringWriter;
 
 public class FlightPathNodeGeoJSONSerializerTest extends TestCase {
     public void testSerializer() throws IOException {
-        var jsonWriter = new StringWriter();
-        var module = new SimpleModule().addSerializer(FlightPathNode[].class, new FlightPathNodeGeoJSONSerializer());
+        var jsonWriter         = new StringWriter();
+        var module             = new SimpleModule().addSerializer(
+                FlightPathNode[].class,
+                new FlightPathNodeGeoJSONSerializer()
+                                                                 );
         var serializerProvider = new ObjectMapper().registerModule(module);
         serializerProvider.writeValue(jsonWriter, new FlightPathNode[] {
                 new FlightPathNode("1", new LngLat(0, 0), 90, new LngLat(0, 1)),

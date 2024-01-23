@@ -2,6 +2,7 @@ package uk.ac.ed.inf.UnitTests.FlightPaths;
 
 import junit.framework.TestCase;
 import uk.ac.ed.inf.FlightPaths.FlightPathGenerator;
+import uk.ac.ed.inf.FlightPaths.LngLatHandler;
 import uk.ac.ed.inf.ilp.data.*;
 
 import java.time.DayOfWeek;
@@ -9,24 +10,49 @@ import java.time.Instant;
 import java.util.Arrays;
 
 public class FlightPathGeneratorTest extends TestCase {
-    public void testGenerateFullPath() {
+    public void testPathContainsAllOrders() {
+        var centralRegion = generateCentralRegion();
+        var noFlyZones    = generateNoFlyZones();
+        var restaurants   = generateRestaurants();
+        var orders        = generateOrders();
+        var generator     = new FlightPathGenerator(centralRegion, noFlyZones, restaurants);
+        var fullPath      = generator.generateFullPath(orders);
+
+        var pathLengths = new int[orders.length];
+        for (int i = 0; i < orders.length; i++)
+            pathLengths[i] = generator.generateFullPath(new Order[] { orders[i] }).length;
+        assertEquals(Arrays.stream(pathLengths).sum(), fullPath.length);
+    }
+
+    public void testRuntime() {
         long startTime = Instant.now().toEpochMilli();
         var  centralRegion = generateCentralRegion();
         var  noFlyZones = generateNoFlyZones();
         var  restaurants = generateRestaurants();
         var  orders = generateOrders();
         var  generator = new FlightPathGenerator(centralRegion, noFlyZones, restaurants);
-        var  fullPath = generator.generateFullPath(orders);
 
-        // Test the runtime.
-        long endTime = Instant.now().toEpochMilli();
-        assertTrue(endTime - startTime < 60_000);
+        generator.generateFullPath(orders);
+        assertTrue(Instant.now().toEpochMilli() - startTime < 60_000);
+    }
 
-        // Test that the full paths contains the paths for every order, there and back.
-        var pathLengths = new int[orders.length];
-        for (int i = 0; i < orders.length; i++)
-            pathLengths[i] = generator.generateFullPath(new Order[] { orders[i] }).length;
-        assertEquals(Arrays.stream(pathLengths).sum(), fullPath.length);
+    public void testPathDoesNotEnterNoFlyZones() {
+        var centralRegion = generateCentralRegion();
+        var noFlyZones    = generateNoFlyZones();
+        var restaurants   = generateRestaurants();
+        var orders        = generateOrders();
+        var generator     = new FlightPathGenerator(centralRegion, noFlyZones, restaurants);
+        var fullPath      = generator.generateFullPath(orders);
+        var lngLatHandler = new LngLatHandler();
+
+        for (var flightPathNode : fullPath) {
+            for (var noFlyZone : noFlyZones) {
+                if (lngLatHandler.lineCrossesRegion(flightPathNode.fromCoordinate(),
+                                                    flightPathNode.toCoordinate(),
+                                                    noFlyZone
+                                                   )) fail("Flight path crosses no fly zone");
+            }
+        }
     }
 
     private NamedRegion generateCentralRegion() {

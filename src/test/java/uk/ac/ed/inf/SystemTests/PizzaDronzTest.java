@@ -77,4 +77,10 @@ public class PizzaDronzTest extends TestCase {
                                       ), 5484);
         assertEquals(countRegexMatches("\\{[^\\}]+\\}", readFile("flightpath-" + validDate + ".json")), 5484);
     }
+
+    public void testRuntime() {
+        long startTime = System.currentTimeMillis();
+        runSystem(validDate);
+        assertTrue(System.currentTimeMillis() - startTime < 60_000);
+    }
 }

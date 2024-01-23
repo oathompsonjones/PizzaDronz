@@ -6,7 +6,6 @@ import uk.ac.ed.inf.FlightPaths.LngLatHandler;
 import uk.ac.ed.inf.ilp.data.*;
 
 import java.time.DayOfWeek;
-import java.time.Instant;
 import java.util.Arrays;
 
 public class FlightPathGeneratorTest extends TestCase {
@@ -25,7 +24,7 @@ public class FlightPathGeneratorTest extends TestCase {
     }
 
     public void testRuntime() {
-        long startTime = Instant.now().toEpochMilli();
+        long startTime = System.currentTimeMillis();
         var  centralRegion = generateCentralRegion();
         var  noFlyZones = generateNoFlyZones();
         var  restaurants = generateRestaurants();
@@ -33,7 +32,7 @@ public class FlightPathGeneratorTest extends TestCase {
         var  generator = new FlightPathGenerator(centralRegion, noFlyZones, restaurants);
 
         generator.generateFullPath(orders);
-        assertTrue(Instant.now().toEpochMilli() - startTime < 60_000);
+        assertTrue(System.currentTimeMillis() - startTime < 60_000);
     }
 
     public void testPathDoesNotEnterNoFlyZones() {

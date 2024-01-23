@@ -61,22 +61,12 @@ public class PizzaDronzTest extends TestCase {
 
     public void testEmptyFileContents() {
         runSystem(emptyDate);
-        assertEquals(readFile("deliveries-" + emptyDate + ".json"), "[ ]");
-        assertEquals(readFile("drone-" + emptyDate + ".geojson"), """
-                                                                  {
-                                                                    "type" : "FeatureCollection",
-                                                                    "features" : [ {
-                                                                      "type" : "Feature",
-                                                                      "geometry" : {
-                                                                        "type" : "LineString",
-                                                                        "coordinates" : [ ]
-                                                                      },
-                                                                      "properties" : {
-                                                                        "name" : "Flight Path"
-                                                                      }
-                                                                    } ]
-                                                                  }""");
-        assertEquals(readFile("flightpath-" + emptyDate + ".json"), "[ ]");
+        assertEquals(readFile("deliveries-" + emptyDate + ".json"), "[]");
+        assertEquals(
+                readFile("drone-" + emptyDate + ".geojson"),
+                "{\"type\":\"FeatureCollection\",\"features\":[{\"type\":\"Feature\",\"geometry\":{\"type\":\"LineString\",\"coordinates\":[]},\"properties\":{\"name\":\"FlightPath\"}}]}"
+                    );
+        assertEquals(readFile("flightpath-" + emptyDate + ".json"), "[]");
     }
 
     public void testFileContents() {

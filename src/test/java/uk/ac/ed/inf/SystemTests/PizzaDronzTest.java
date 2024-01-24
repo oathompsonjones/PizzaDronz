@@ -48,6 +48,7 @@ public class PizzaDronzTest extends TestCase {
         runSystem(emptyDate);
         var directory = new File("resultfiles");
         assertEquals(3, Objects.requireNonNull(directory.listFiles()).length);
+        resetResultFilesDirectory();
     }
 
     public void testFileOutputNames() {
@@ -57,6 +58,7 @@ public class PizzaDronzTest extends TestCase {
         assertEquals("deliveries-" + emptyDate + ".json", files[0].getName());
         assertEquals("drone-" + emptyDate + ".geojson", files[1].getName());
         assertEquals("flightpath-" + emptyDate + ".json", files[2].getName());
+        resetResultFilesDirectory();
     }
 
     public void testEmptyFileContents() {
@@ -67,6 +69,7 @@ public class PizzaDronzTest extends TestCase {
                 "{\"type\":\"FeatureCollection\",\"features\":[{\"type\":\"Feature\",\"geometry\":{\"type\":\"LineString\",\"coordinates\":[]},\"properties\":{\"name\":\"FlightPath\"}}]}"
                     );
         assertEquals(readFile("flightpath-" + emptyDate + ".json"), "[]");
+        resetResultFilesDirectory();
     }
 
     public void testFileContents() {
@@ -76,11 +79,13 @@ public class PizzaDronzTest extends TestCase {
                                        readFile("drone-" + validDate + ".geojson")
                                       ), 5484);
         assertEquals(countRegexMatches("\\{[^\\}]+\\}", readFile("flightpath-" + validDate + ".json")), 5484);
+        resetResultFilesDirectory();
     }
 
     public void testRuntime() {
         long startTime = System.currentTimeMillis();
         runSystem(validDate);
         assertTrue(System.currentTimeMillis() - startTime < 60_000);
+        resetResultFilesDirectory();
     }
 }

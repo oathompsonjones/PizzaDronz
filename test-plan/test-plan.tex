@@ -1,0 +1,90 @@
+% Define the type of document.
+\documentclass[11pt, a4paper]{article}
+
+% Set a more sensible document size.
+\usepackage[margin=0.75in]{geometry}
+
+% Set the fonts.
+\usepackage{fontspec}
+    \setmainfont{Lato}
+    \setmonofont[Contextuals=Alternate, Scale=0.8]{Fira Code}
+    \makeatletter\renewcommand*\verbatim@nolig@list{}\makeatother
+
+% Set the language.
+\usepackage[british]{babel}
+    \usepackage{csquotes}
+
+% Prevent words from being split accross lines.
+\tolerance=1\emergencystretch=\maxdimen\hyphenpenalty=10000\hbadness=10000
+
+% Set up the bibliography.
+\usepackage[sorting=none, style=science]{biblatex}
+    \addbibresource{references.bib}
+\usepackage[colorlinks=true, allcolors=blue]{hyperref}
+
+% Allow syntax highlighting for code segments.
+\usepackage[outputdir=build]{minted}
+    \setminted{
+        style=one-dark,
+        linenos,
+        autogobble,
+        breaklines,
+        breakautoindent,
+        breakanywhere,
+        mathescape,
+        resetmargins,
+        tabsize=4
+    }
+
+% Allow more advanced maths.
+\usepackage{amsmath}
+
+% Create better tables.
+\usepackage{xltabular}
+    \renewcommand{\arraystretch}{2}
+
+% Allows images to be included.
+\usepackage{graphicx, animate}
+    \graphicspath{ {./images/} }
+
+% Allow for drawing complex diagrams.
+\usepackage{tikz}
+    \usetikzlibrary{positioning}
+
+% Allow disabling of floating objects.
+\usepackage{float}
+
+% Allows the use of subfiles.
+\usepackage{subfiles}
+
+% Removes numbers from headings and the contents page.
+\setcounter{secnumdepth}{0}
+
+% Sets the title.
+\title{PizzaDronz Test Plan}
+\author{Ollie Jones — s2153980}
+\date{}
+
+\newcommand{\baseURL}{https://github.com/oathompsonjones/PizzaDronz}
+
+% Begin the document.
+\begin{document}
+\maketitle
+
+\section{Requirements}
+    The requirements for the PizzaDronz project are outlined in the \href{\baseURL/blob/main/Project%20Proposal.pdf}{project proposal}.
+    In summary, the requirements are as follows:
+    \begin{itemize}
+        \item The system must be able to retrieve data from the REST API, including orders, restaurants and no-fly-zones.
+        \item The system must be able to deserialise the JSON data returned by the REST API.
+        \item The system must be able to validate each order to check if it should be delivered or not.
+        \item The system must be able to calculate the optimal route from a given restaurant to Appleton Tower, without entering any no-fly-zones.
+        \item The system must be able to stitch each route together to create a single route for all orders.
+        \item The system must be able to serialise the route and order validation results into JSON and GeoJSON formats.
+        \item The system must be able to provide these output in three files in the resultfiles directory.
+        \item The system should be able to complete the entire process in under 60 seconds.
+        \item The system should be data driven and scalable to allow for further development in the future.
+        \item The system should be well documented to allow others developers to pick up the project in the future.
+    \end{itemize}
+
+\end{document}

@@ -33,7 +33,7 @@ resultfiles/**
 /dist/
 /nbdist/
 /.nb-gradle/
-build/
+**/build/**
 !**/src/main/**/build/
 !**/src/test/**/build/
 
@@ -42,3 +42,5 @@ build/
 
 ### Mac OS ###
 .DS_Store
+
+!test-plan/build/test-plan.pdf
